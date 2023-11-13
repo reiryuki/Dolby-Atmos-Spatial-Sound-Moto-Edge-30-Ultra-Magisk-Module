@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <enable-disable-package>
-    <package-disable-enable-criteria package="com.dolby.daxservice" carrierBased="true" default_action="enable">
+    <package-disable-enable-criteria package="com.motorola.dolby.dolbyui" carrierBased="true" default_action="enable">
         <criteria action="enable" channel="vzw"/>
         <criteria action="enable" channel="vzwpre"/>
     </package-disable-enable-criteria>
