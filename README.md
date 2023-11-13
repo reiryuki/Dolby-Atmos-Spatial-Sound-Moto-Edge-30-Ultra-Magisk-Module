@@ -1,27 +1,29 @@
-# Dolby Atmos Moto G52 Magisk Module
+# Dolby Atmos Moto Edge 30 Ultra Magisk Module
 
 ## DISCLAIMER
 - Motorola & Dolby apps and blobs are owned by Motorola™ & Dolby™.
 - The MIT license specified here is for the Magisk Module only, not for Motorola & Dolby apps and blobs.
 
 ## Descriptions
-- Equalizer soundfx ported from Motorola Moto G52 (rhode) and integrated as a Magisk Module for all supported and rooted devices with Magisk
+- Equalizers soundfx ported from Motorola Edge 30 Ultra (eqs) and integrated as a Magisk Module for all supported and rooted devices with Magisk
+- Dolby Atmos and Spatial Sound
 - Global type soundfx
+- Changes/spoofs ro.product.brand to motorola which may break some system apps and features functionality
 - Doesn't support auxiliary cable
 
 ## Sources
-- https://dumps.tadiphone.dev/dumps/motorola/rhode user-12-S1SR32.38-124-3-a8403-release-keys
-- libswvqe.so: https://dumps.tadiphone.dev/dumps/redmi/alioth qssi-user-12-SKQ1.211006.001-V13.0.3.0.SKHEUXM-release-keys
+- https://dumps.tadiphone.dev/dumps/motorola/eqs user-13-T1SQ33.15-11-137-10-71a49-release-keys
+- /system/vendor/etc/aualgo: https://dumps.tadiphone.dev/dumps/motorola/rtwo user-13-T1TR33.43-20-28-8fa75-release-keys
+- libswvqe.so: LENOVO TB-J606F
 
 ## Screenshots
-- https://t.me/androidryukimodsdiscussions/108103
+- https://t.me/androidryukimods/1527
 
 ## Requirements
 - Android 11 and up
 - Architecture 64 bit
 - Magisk or KernelSU installed (Recommended to use Magisk Delta for systemless early init mount manifest.xml if your ROM is Read-Only https://t.me/androidryukimodsdiscussions/100091)
 - Moto Core Magisk Module installed https://github.com/reiryuki/Moto-Core-Magisk-Module except you are in Motorola ROM
-- ROM doesn't use vendor.dolby.media.c2@1.0-service
 
 ## WARNING!!!
 - Possibility of bootloop or even softbrick or a service failure on Read-Only ROM if you don't use Magisk Delta.
@@ -32,7 +34,7 @@
 - Reboot
 - Install Moto Core Magisk Module first: https://github.com/reiryuki/Moto-Core-Magisk-Module except you are in Motorola ROM
 - If you have Dolby in-built in your ROM, then you need to activate data.cleanup=1 at the first time install (READ Optionals bellow!)
-- Install this module https://www.pling.com/p/1908400/ via Magisk app or KernelSU app or Recovery if Magisk installed
+- Install this module https://www.pling.com/p/ via Magisk app or KernelSU app or Recovery if Magisk installed
 - Install AML Magisk Module https://t.me/androidryukimodsdiscussions/29836 only if using any other audio mod module
 - Reboot
 - If you are using KernelSU, you need to allow superuser list manually all package name listed in package.txt (and your home launcher app also) (enable show system apps) and reboot after
@@ -48,13 +50,12 @@
 - https://t.me/androidryukimodsdiscussions/2617
 - Global: https://t.me/androidryukimodsdiscussions/29836
 
+## Tested on
+- Android 13 CrDroid ROM
+
 ## Support & Bug Report
 - https://t.me/androidryukimodsdiscussions/2618
 - If you don't do above, issues will be closed immediately
-
-## Tested on
-- Android 12.1 Nusantara ROM
-- Android 13 Nusantara ROM, AOSP ROM, & CrDroid ROM
 
 ## Credits and contributors
 - https://t.me/viperatmos

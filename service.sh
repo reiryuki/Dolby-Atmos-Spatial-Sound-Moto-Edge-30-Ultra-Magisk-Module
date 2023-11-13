@@ -10,11 +10,13 @@ API=`getprop ro.build.version.sdk`
 
 # property
 resetprop ro.audio.ignore_effects false
+resetprop ro.product.brand motorola
+resetprop ro.vendor.audio.moto_sst_supported true
 resetprop -p --delete persist.vendor.audio_fx.current
 resetprop -n persist.vendor.audio_fx.current dolby
-resetprop ro.vendor.dolby.dax.version DAX3_3.6.0.12_r1
-resetprop vendor.audio.dolby.ds2.enabled true
-resetprop vendor.audio.dolby.ds2.hardbypass true
+resetprop ro.vendor.dolby.dax.version DAX3_3.8.5.20_r1
+resetprop vendor.audio.dolby.ds2.enabled false
+resetprop vendor.audio.dolby.ds2.hardbypass false
 
 # restart
 if [ "$API" -ge 24 ]; then
@@ -28,7 +30,8 @@ if [ "$PID" ]; then
 fi
 
 # stop
-NAMES="dms-hal-1-0 dms-hal-2-0 dms-v36-hal-2-0"
+NAMES="dms-hal-1-0 dms-hal-2-0 dms-v36-hal-2-0
+       vendor-dolby-media-c2-hal-1-0"
 for NAME in $NAMES; do
   if [ "`getprop init.svc.$NAME`" == running ]\
   || [ "`getprop init.svc.$NAME`" == restarting ]; then
@@ -49,7 +52,8 @@ if [ "`realpath $DIR`" == $DIR ] && [ -f $FILE ]; then
 fi
 
 # run
-SERVICES=`realpath /vendor`/bin/hw/vendor.dolby.hardware.dms@2.0-service
+SERVICES="`realpath /vendor`/bin/hw/vendor.dolby.hardware.dms@2.0-service
+          `realpath /vendor`/bin/hw/vendor.dolby.media.c2@1.0-service"
 for SERVICE in $SERVICES; do
   killall $SERVICE
   $SERVICE &
@@ -188,6 +192,15 @@ for SERVICE in $SERVICES; do
     PID=`pidof $SERVICE`
   fi
 done
+PIDS=`pidof vendor.dolby.media.c2@1.0-service`
+FILE=/dev/cpuset/foreground/tasks
+if [ "$PIDS" ]; then
+  for PID in $PIDS; do
+    if ! grep $PID $FILE; then
+      echo $PID > $FILE
+    fi
+  done
+fi
 PROC="com.dolby.daxservice com.motorola.dolby.dolbyui"
 killall $PROC
 check_audioserver
