@@ -48,31 +48,38 @@ else
 fi
 ui_print " "
 
-# bit
-if [ "$IS64BIT" == true ]; then
-  ui_print "- 64 bit architecture"
-  ui_print " "
-  # 32 bit
-  if [ "$LIST32BIT" ]; then
-    ui_print "- 32 bit library support"
-  else
-    ui_print "- Doesn't support 32 bit library"
-    rm -rf $MODPATH/system*/lib $MODPATH/system*/vendor/lib
-  fi
-  ui_print " "
-else
-  abort "- This module is only for 64 bit architectures."
-fi
-
 # sdk
-NUM=28
+NUM=26
 if [ "$API" -lt $NUM ]; then
-  ui_print "! Unsupported SDK $API. You have to upgrade your"
-  ui_print "  Android version at least SDK API $NUM to use this module."
+  ui_print "! Unsupported SDK $API."
+  ui_print "  You have to upgrade your Android version"
+  ui_print "  at least SDK API $NUM to use this module."
   abort
 else
   ui_print "- SDK $API"
+  if [ "`grep_prop moto.dolby $OPTIONALS`" != 0 ]; then
+    if [ "$API" -lt 30 ]; then
+      ui_print "  ! Unsupported Dolby Atmos."
+      DOLBY=false
+    else
+      DOLBY=true
+    fi
+  else
+    DOLBY=false
+  fi
   ui_print " "
+fi
+
+# motocore
+if [ ! -d /data/adb/modules_update/MotoCore ]\
+&& [ ! -d /data/adb/modules/MotoCore ]; then
+  ui_print "- This module requires Moto Core Magisk Module installed"
+  ui_print "  except you are in Motorola ROM."
+  ui_print "  Please read the installation guide!"
+  ui_print " "
+else
+  rm -f /data/adb/modules/MotoCore/remove
+  rm -f /data/adb/modules/MotoCore/disable
 fi
 
 # recovery
@@ -106,53 +113,12 @@ SYSTEM_EXT=`realpath $MIRROR/system_ext`
 ODM=`realpath $MIRROR/odm`
 MY_PRODUCT=`realpath $MIRROR/my_product`
 
-# check
-#FILE=/bin/hw/vendor.dolby.media.c2@1.0-service
-#if [ -f /system$FILE ] || [ -f /vendor$FILE ]\
-#|| [ -f /odm$FILE ] || [ -f /system_ext$FILE ]\
-#|| [ -f /product$FILE ]; then
-#  ui_print "! This module is conflicting with your"
-#  ui_print "  $FILE"
-#  abort
-#fi
-
-# check
-NAME=_ZN7android23sp_report_stack_pointerEv
-if [ "$IS64BIT" == true ]; then
-  FILE=$VENDOR/lib64/hw/*audio*.so
-  ui_print "- Checking"
-  ui_print "$NAME"
-  ui_print "  function at"
-  ui_print "$FILE"
-  ui_print "  Please wait..."
-  if ! grep -q $NAME $FILE; then
-    ui_print "  ! Function not found."
-    ui_print "    Unsupported ROM."
-    if [ "$BOOTMODE" == true ] && [ ! "$MAGISKPATH" ]; then
-      unmount_mirror
-    fi
-    abort
-  fi
-  ui_print " "
-fi
-if [ "$LIST32BIT" ]; then
-  FILE=$VENDOR/lib/hw/*audio*.so
-  ui_print "- Checking"
-  ui_print "$NAME"
-  ui_print "  function at"
-  ui_print "$FILE"
-  ui_print "  Please wait..."
-  if ! grep -q $NAME $FILE; then
-    ui_print "  Function not found."
-    unset LIST32BIT
-    rm -rf $MODPATH/system*/lib $MODPATH/system*/vendor/lib
-  fi
-  ui_print " "
-fi
+# .aml.sh
+mv -f $MODPATH/aml.sh $MODPATH/.aml.sh
 
 # function
 run_check_function() {
-LISTS=`strings $MODPATH/system/vendor$DIR/$DES | grep ^lib | grep .so`
+LISTS=`strings $MODPATH/system_dolby/vendor$DIR/$DES | grep ^lib | grep .so`
 FILE=`for LIST in $LISTS; do echo $SYSTEM$DIR/$LIST; done`
 ui_print "- Checking"
 ui_print "$NAME"
@@ -171,17 +137,93 @@ if [ "$IS64BIT" == true ]; then
   DIR=/lib64
   run_check_function
 fi
-if [ "$LIST32BIT" ]; then
+if [ "$LIST32BIT" ] && [ $DOLBY32 == true ]; then
   DIR=/lib
   run_check_function
 fi
 }
 
-# check
-NAME=_ZN7android8hardware23getOrCreateCachedBinderEPNS_4hidl4base4V1_05IBaseE
-DES=vendor.dolby.hardware.dms@2.0.so
-LIB=libhidlbase.so
-check_function
+# bit
+if [ "$IS64BIT" == true ]; then
+  ui_print "- 64 bit architecture"
+  ui_print " "
+  # 32 bit
+  if [ "$LIST32BIT" ]; then
+    ui_print "- 32 bit library support"
+  else
+    ui_print "- Doesn't support 32 bit library"
+    rm -rf $MODPATH/armeabi-v7a $MODPATH/x86\
+     $MODPATH/system*/lib $MODPATH/system*/vendor/lib
+  fi
+  ui_print " "
+  # check
+  NAME=_ZN7android23sp_report_stack_pointerEv
+  if [ $DOLBY == true ]; then
+    ui_print "- Activating Dolby Atmos..."
+    ui_print " "
+    FILE=$VENDOR/lib64/hw/*audio*.so
+    ui_print "- Checking"
+    ui_print "$NAME"
+    ui_print "  function at"
+    ui_print "$FILE"
+    ui_print "  Please wait..."
+    if grep -q $NAME $FILE; then
+      DOLBY=true
+    else
+      ui_print "  ! Function not found."
+      ui_print "    Unsupported Dolby Atmos."
+      DOLBY=false
+    fi
+    ui_print " "
+  fi
+  if [ $DOLBY == true ] && [ "$LIST32BIT" ]; then
+    FILE=$VENDOR/lib/hw/*audio*.so
+    ui_print "- Checking"
+    ui_print "$NAME"
+    ui_print "  function at"
+    ui_print "$FILE"
+    ui_print "  Please wait..."
+    if grep -q $NAME $FILE; then
+      DOLBY32=true
+    else
+      ui_print "  Function not found."
+      DOLBY32=false
+      rm -rf $MODPATH/system_dolby/lib $MODPATH/system_dolby/vendor/lib
+    fi
+    ui_print " "
+  fi
+  # check
+  NAME=_ZN7android8hardware23getOrCreateCachedBinderEPNS_4hidl4base4V1_05IBaseE
+  DES=vendor.dolby.hardware.dms@2.0.so
+  LIB=libhidlbase.so
+  if [ $DOLBY == true ]; then
+    check_function
+  fi
+  if [ $DOLBY == true ]; then
+    cp -rf $MODPATH/system_dolby/* $MODPATH/system
+    sed -i 's|#d||g' $MODPATH/.aml.sh
+    sed -i 's|#d||g' $MODPATH/*.sh
+  fi
+else
+  ui_print "- 32 bit architecture"
+  rm -rf `find $MODPATH -type d -name *64*`
+  if [ $DOLBY == true ]; then
+    ui_print "  ! Unsupported Dolby Atmos."
+  fi
+  DOLBY=false
+  ui_print " "
+fi
+rm -rf $MODPATH/system_dolby
+
+# name
+if [ $DOLBY != true ]; then
+  ui_print "- Deactivating Dolby Atmos..."
+  MODNAME2='Spatial Sound Moto Edge 30 Ultra'
+  sed -i "s|$MODNAME|$MODNAME2|g" $MODPATH/module.prop
+  MODNAME=$MODNAME2
+  sed -i 's|pm enable|pm disable|g' $MODPATH/service.sh
+  ui_print " "
+fi
 
 # sepolicy
 FILE=$MODPATH/sepolicy.rule
@@ -190,21 +232,6 @@ if [ "`grep_prop sepolicy.sh $OPTIONALS`" == 1 ]\
 && [ -f $FILE ]; then
   mv -f $FILE $DES
 fi
-
-# motocore
-if [ ! -d /data/adb/modules_update/MotoCore ]\
-&& [ ! -d /data/adb/modules/MotoCore ]; then
-  ui_print "- This module requires Moto Core Magisk Module installed"
-  ui_print "  except you are in Motorola ROM."
-  ui_print "  Please read the installation guide!"
-  ui_print " "
-else
-  rm -f /data/adb/modules/MotoCore/remove
-  rm -f /data/adb/modules/MotoCore/disable
-fi
-
-# .aml.sh
-mv -f $MODPATH/aml.sh $MODPATH/.aml.sh
 
 # mod ui
 if [ "`grep_prop mod.ui $OPTIONALS`" == 1 ]; then
@@ -226,13 +253,17 @@ fi
 
 # cleaning
 ui_print "- Cleaning..."
-PKGS=`cat $MODPATH/package.txt`
+if [ $DOLBY == true ]; then
+  PKGS=`cat $MODPATH/package-dolby.txt`
+  rm -f /data/vendor/dolby/dax_sqlite3.db
+else
+  PKGS=`cat $MODPATH/package.txt`
+fi
 if [ "$BOOTMODE" == true ]; then
   for PKG in $PKGS; do
     RES=`pm uninstall $PKG 2>/dev/null`
   done
 fi
-rm -f /data/vendor/dolby/dax_sqlite3.db
 rm -rf $MODPATH/unused
 remove_sepolicy_rule
 ui_print " "
@@ -263,17 +294,20 @@ done
 }
 
 # conflict
-NAMES="dolbyatmos MotoDolby DolbyAudio dsplus Dolby"
-conflict
-NAMES=SoundEnhancement
-FILE=/data/adb/modules/$NAMES/module.prop
-if grep -q 'Dolby Atmos Xperia' $FILE; then
+if [ $DOLBY == true ]; then
+  NAMES="dolbyatmos DolbyAtmos MotoDolby DolbyAudio
+         dsplus Dolby"
   conflict
-fi
-NAMES=MiSound
-FILE=/data/adb/modules/$NAMES/module.prop
-if grep -q 'and Dolby Atmos' $FILE; then
-  conflict
+  NAMES=SoundEnhancement
+  FILE=/data/adb/modules/$NAMES/module.prop
+  if grep -q 'Dolby Atmos Xperia' $FILE; then
+    conflict
+  fi
+  NAMES=MiSound
+  FILE=/data/adb/modules/$NAMES/module.prop
+  if grep -q 'and Dolby Atmos' $FILE; then
+    conflict
+  fi
 fi
 
 # function
@@ -551,89 +585,101 @@ elif [ "`grep_prop permissive.mode $OPTIONALS`" == 2 ]; then
 fi
 
 # remount
-remount_rw
+if [ $DOLBY == true ]; then
+  remount_rw
+fi
 
 # early init mount dir
-early_init_mount_dir
+if [ $DOLBY == true ]; then
+  early_init_mount_dir
+fi
 
 # check
 #chcon -R u:object_r:system_lib_file:s0 $MODPATH/system_support/lib*
 #NAMES="libhidltransport.so libhwbinder.so"
-#find_file
+#if [ $DOLBY == true ]; then
+#  find_file
+#fi
 rm -rf $MODPATH/system_support
 
 # patch manifest.xml
-FILE="$MAGISKTMP/mirror/*/etc/vintf/manifest.xml
-      $MAGISKTMP/mirror/*/*/etc/vintf/manifest.xml
-      /*/etc/vintf/manifest.xml /*/*/etc/vintf/manifest.xml
-      $MAGISKTMP/mirror/*/etc/vintf/manifest/*.xml
-      $MAGISKTMP/mirror/*/*/etc/vintf/manifest/*.xml
-      /*/etc/vintf/manifest/*.xml /*/*/etc/vintf/manifest/*.xml"
-if [ "`grep_prop dolby.skip.vendor $OPTIONALS`" != 1 ]\
-&& ! grep -A2 vendor.dolby.hardware.dms $FILE | grep -q 2.0; then
-  FILE=$VENDOR/etc/vintf/manifest.xml
-  patch_manifest
-fi
-if [ "`grep_prop dolby.skip.system $OPTIONALS`" != 1 ]\
-&& ! grep -A2 vendor.dolby.hardware.dms $FILE | grep -q 2.0; then
-  FILE=$SYSTEM/etc/vintf/manifest.xml
-  patch_manifest
-fi
-if [ "`grep_prop dolby.skip.system_ext $OPTIONALS`" != 1 ]\
-&& ! grep -A2 vendor.dolby.hardware.dms $FILE | grep -q 2.0; then
-  FILE=$SYSTEM_EXT/etc/vintf/manifest.xml
-  patch_manifest
-fi
-if ! grep -A2 vendor.dolby.hardware.dms $FILE | grep -q 2.0; then
-  patch_manifest_eim
-  if [ $EIM == false ]; then
-    ui_print "- Using systemless manifest.xml patch."
-    ui_print "  On some ROMs, it causes bugs or even makes bootloop"
-    ui_print "  because not allowed to restart hwservicemanager."
-    ui_print "  You can fix this by using Magisk Delta."
-    ui_print " "
+if [ $DOLBY == true ]; then
+  FILE="$MAGISKTMP/mirror/*/etc/vintf/manifest.xml
+        $MAGISKTMP/mirror/*/*/etc/vintf/manifest.xml
+        /*/etc/vintf/manifest.xml /*/*/etc/vintf/manifest.xml
+        $MAGISKTMP/mirror/*/etc/vintf/manifest/*.xml
+        $MAGISKTMP/mirror/*/*/etc/vintf/manifest/*.xml
+        /*/etc/vintf/manifest/*.xml /*/*/etc/vintf/manifest/*.xml"
+  if [ "`grep_prop dolby.skip.vendor $OPTIONALS`" != 1 ]\
+  && ! grep -A2 vendor.dolby.hardware.dms $FILE | grep -q 2.0; then
+    FILE=$VENDOR/etc/vintf/manifest.xml
+    patch_manifest
   fi
-  FILES="$MAGISKTMP/mirror/*/etc/vintf/manifest.xml
-         $MAGISKTMP/mirror/*/*/etc/vintf/manifest.xml
-         /*/etc/vintf/manifest.xml /*/*/etc/vintf/manifest.xml"
-  restore
+  if [ "`grep_prop dolby.skip.system $OPTIONALS`" != 1 ]\
+  && ! grep -A2 vendor.dolby.hardware.dms $FILE | grep -q 2.0; then
+    FILE=$SYSTEM/etc/vintf/manifest.xml
+    patch_manifest
+  fi
+  if [ "`grep_prop dolby.skip.system_ext $OPTIONALS`" != 1 ]\
+  && ! grep -A2 vendor.dolby.hardware.dms $FILE | grep -q 2.0; then
+    FILE=$SYSTEM_EXT/etc/vintf/manifest.xml
+    patch_manifest
+  fi
+  if ! grep -A2 vendor.dolby.hardware.dms $FILE | grep -q 2.0; then
+    patch_manifest_eim
+    if [ $EIM == false ]; then
+      ui_print "- Using systemless manifest.xml patch."
+      ui_print "  On some ROMs, it causes bugs or even makes bootloop"
+      ui_print "  because not allowed to restart hwservicemanager."
+      ui_print "  You can fix this by using Magisk Delta."
+      ui_print " "
+    fi
+    FILES="$MAGISKTMP/mirror/*/etc/vintf/manifest.xml
+           $MAGISKTMP/mirror/*/*/etc/vintf/manifest.xml
+           /*/etc/vintf/manifest.xml /*/*/etc/vintf/manifest.xml"
+    restore
+  fi
 fi
 
 # patch hwservice contexts
-FILE="$MAGISKTMP/mirror/*/etc/selinux/*_hwservice_contexts
-      $MAGISKTMP/mirror/*/*/etc/selinux/*_hwservice_contexts
-      /*/etc/selinux/*_hwservice_contexts
-      /*/*/etc/selinux/*_hwservice_contexts"
-if [ "`grep_prop dolby.skip.vendor $OPTIONALS`" != 1 ]\
-&& ! grep -Eq 'u:object_r:hal_dms_hwservice:s0|u:object_r:default_android_hwservice:s0' $FILE; then
-  FILE=$VENDOR/etc/selinux/vendor_hwservice_contexts
-  patch_hwservice
-fi
-if [ "`grep_prop dolby.skip.system $OPTIONALS`" != 1 ]\
-&& ! grep -Eq 'u:object_r:hal_dms_hwservice:s0|u:object_r:default_android_hwservice:s0' $FILE; then
-  FILE=$SYSTEM/etc/selinux/plat_hwservice_contexts
-  patch_hwservice
-fi
-if [ "`grep_prop dolby.skip.system_ext $OPTIONALS`" != 1 ]\
-&& ! grep -Eq 'u:object_r:hal_dms_hwservice:s0|u:object_r:default_android_hwservice:s0' $FILE; then
-  FILE=$SYSTEM_EXT/etc/selinux/system_ext_hwservice_contexts
-  patch_hwservice
-fi
-if ! grep -Eq 'u:object_r:hal_dms_hwservice:s0|u:object_r:default_android_hwservice:s0' $FILE; then
-  patch_hwservice_eim
-  if [ $EIM == false ]; then
-    ui_print "! Failed to set hal_dms_hwservice context."
-    ui_print " "
+if [ $DOLBY == true ]; then
+  FILE="$MAGISKTMP/mirror/*/etc/selinux/*_hwservice_contexts
+        $MAGISKTMP/mirror/*/*/etc/selinux/*_hwservice_contexts
+        /*/etc/selinux/*_hwservice_contexts
+        /*/*/etc/selinux/*_hwservice_contexts"
+  if [ "`grep_prop dolby.skip.vendor $OPTIONALS`" != 1 ]\
+  && ! grep -Eq 'u:object_r:hal_dms_hwservice:s0|u:object_r:default_android_hwservice:s0' $FILE; then
+    FILE=$VENDOR/etc/selinux/vendor_hwservice_contexts
+    patch_hwservice
   fi
-  FILES="$MAGISKTMP/mirror/*/etc/selinux/*_hwservice_contexts
-         $MAGISKTMP/mirror/*/*/etc/selinux/*_hwservice_contexts
-         /*/etc/selinux/*_hwservice_contexts
-         /*/*/etc/selinux/*_hwservice_contexts"
-  restore
+  if [ "`grep_prop dolby.skip.system $OPTIONALS`" != 1 ]\
+  && ! grep -Eq 'u:object_r:hal_dms_hwservice:s0|u:object_r:default_android_hwservice:s0' $FILE; then
+    FILE=$SYSTEM/etc/selinux/plat_hwservice_contexts
+    patch_hwservice
+  fi
+  if [ "`grep_prop dolby.skip.system_ext $OPTIONALS`" != 1 ]\
+   && ! grep -Eq 'u:object_r:hal_dms_hwservice:s0|u:object_r:default_android_hwservice:s0' $FILE; then
+    FILE=$SYSTEM_EXT/etc/selinux/system_ext_hwservice_contexts
+    patch_hwservice
+  fi
+  if ! grep -Eq 'u:object_r:hal_dms_hwservice:s0|u:object_r:default_android_hwservice:s0' $FILE; then
+    patch_hwservice_eim
+    if [ $EIM == false ]; then
+      ui_print "! Failed to set hal_dms_hwservice context."
+      ui_print " "
+    fi
+    FILES="$MAGISKTMP/mirror/*/etc/selinux/*_hwservice_contexts
+           $MAGISKTMP/mirror/*/*/etc/selinux/*_hwservice_contexts
+           /*/etc/selinux/*_hwservice_contexts
+           /*/*/etc/selinux/*_hwservice_contexts"
+    restore
+  fi
 fi
 
 # remount
-remount_ro
+if [ $DOLBY == true ]; then
+  remount_ro
+fi
 
 # function
 hide_oat() {
@@ -688,9 +734,12 @@ done
 # hide
 APPS="`ls $MODPATH/system/priv-app` `ls $MODPATH/system/app`"
 hide_oat
-APPS="MusicFX MotoDolbyV3 DaxUI OPSoundTuner
-      DolbyAtmos AudioEffectCenter"
+APPS="MusicFX MotoDolbyV3"
 hide_app
+if [ $DOLBY == true ]; then
+  APPS="DaxUI OPSoundTuner DolbyAtmos AudioEffectCenter"
+  hide_app
+fi
 
 # stream mode
 FILE=$MODPATH/.aml.sh
@@ -774,7 +823,8 @@ if echo "$PROP" | grep -q g; then
   ui_print " "
 fi
 
-# settings
+# function
+dolby_settings() {
 FILE=$MODPATH/system/vendor/etc/dolby/dax-default.xml
 PROP=`grep_prop dolby.bass $OPTIONALS`
 if [ "$PROP" == def ]; then
@@ -844,6 +894,25 @@ if [ "$PROP" ] && [ "$PROP" -gt 192 ]; then
   sed -i "s|max_edit_gain=\"192\"|max_edit_gain=\"$PROP\"|g" $FILE
 fi
 ui_print " "
+}
+
+# settings
+if [ $DOLBY == true ]; then
+  dolby_settings
+fi
+
+# function
+file_check_vendor() {
+for FILE in $FILES; do
+  DES=$VENDOR$FILE
+  DES2=$ODM$FILE
+  if [ -f $DES ] || [ -f $DES2 ]; then
+    ui_print "- Detected $FILE"
+    ui_print " "
+    rm -f $MODPATH/system/vendor$FILE
+  fi
+done
+}
 
 # audio rotation
 FILE=$MODPATH/service.sh
@@ -864,32 +933,10 @@ else
   sed -i 's|#u||g' $FILE
 fi
 
-# function
-file_check_vendor() {
-for FILE in $FILES; do
-  DES=$VENDOR$FILE
-  DES2=$ODM$FILE
-  if [ -f $DES ] || [ -f $DES2 ]; then
-    ui_print "- Detected $FILE"
-    ui_print " "
-    rm -f $MODPATH/system/vendor$FILE
-  fi
-done
-}
-
-# check
-if [ "$IS64BIT" == true ]; then
-  FILES="/lib64/libdeccfg.so
-         /lib64/libcodec2_store_dolby.so
-         /lib64/libcodec2_soft_ddpdec.so
-         /lib64/libcodec2_soft_ac4dec.so"
-#  file_check_vendor
-fi
-
 # vendor_overlay
 DIR=/product/vendor_overlay
 if [ "`grep_prop fix.vendor_overlay $OPTIONALS`" == 1 ]\
-&& [ -d $DIR ]; then
+&& [ $DOLBY == true ] && [ -d $DIR ]; then
   ui_print "- Fixing $DIR mount..."
   cp -rf $DIR/*/* $MODPATH/system/vendor
   ui_print " "
@@ -897,11 +944,13 @@ fi
 
 # uninstaller
 NAME=DolbyModuleUninstaller.zip
-cp -f $MODPATH/$NAME /sdcard
+if [ $DOLBY == true ]; then
+  cp -f $MODPATH/$NAME /sdcard
+  ui_print "- Flash /sdcard/$NAME"
+  ui_print "  via recovery only if you got bootloop"
+  ui_print " "
+fi
 rm -f $MODPATH/$NAME
-ui_print "- Flash /sdcard/$NAME"
-ui_print "  via recovery only if you got bootloop"
-ui_print " "
 
 # run
 . $MODPATH/copy.sh

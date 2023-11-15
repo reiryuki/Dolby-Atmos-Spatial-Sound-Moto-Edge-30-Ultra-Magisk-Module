@@ -542,10 +542,10 @@ fi
 }
 
 # effect
-dap
-vqe
-gamedap
-dvl
+#ddap
+#dvqe
+#dgamedap
+#ddvl
 moto_sst
 
 # patch audio policy

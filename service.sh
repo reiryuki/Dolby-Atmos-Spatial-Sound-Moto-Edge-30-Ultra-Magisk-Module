@@ -8,15 +8,20 @@ set -x
 # var
 API=`getprop ro.build.version.sdk`
 
-# property
-resetprop ro.audio.ignore_effects false
+# function
+dolby_prop() {
 resetprop ro.product.brand motorola
-resetprop ro.vendor.audio.moto_sst_supported true
 resetprop -p --delete persist.vendor.audio_fx.current
 resetprop -n persist.vendor.audio_fx.current dolby
 resetprop ro.vendor.dolby.dax.version DAX3_3.8.5.20_r1
 resetprop vendor.audio.dolby.ds2.enabled false
 resetprop vendor.audio.dolby.ds2.hardbypass false
+}
+
+# property
+resetprop ro.audio.ignore_effects false
+#ddolby_prop
+resetprop ro.vendor.audio.moto_sst_supported true
 
 # restart
 if [ "$API" -ge 24 ]; then
@@ -29,16 +34,16 @@ if [ "$PID" ]; then
   killall $SERVER android.hardware.audio@4.0-service-mediatek
 fi
 
+# function
+dolby_service() {
 # stop
-NAMES="dms-hal-1-0 dms-hal-2-0 dms-v36-hal-2-0
-       vendor-dolby-media-c2-hal-1-0"
+NAMES="dms-hal-1-0 dms-hal-2-0 dms-v36-hal-2-0"
 for NAME in $NAMES; do
   if [ "`getprop init.svc.$NAME`" == running ]\
   || [ "`getprop init.svc.$NAME`" == restarting ]; then
     stop $NAME
   fi
 done
-
 # mount
 DIR=/odm/bin/hw
 FILE=$DIR/vendor.dolby_v3_6.hardware.dms360@2.0-service
@@ -50,16 +55,13 @@ if [ "`realpath $DIR`" == $DIR ] && [ -f $FILE ]; then
     mount -o bind $MODPATH/system/vendor/$FILE $FILE
   fi
 fi
-
 # run
-SERVICES="`realpath /vendor`/bin/hw/vendor.dolby.hardware.dms@2.0-service
-          `realpath /vendor`/bin/hw/vendor.dolby.media.c2@1.0-service"
+SERVICES=`realpath /vendor`/bin/hw/vendor.dolby.hardware.dms@2.0-service
 for SERVICE in $SERVICES; do
   killall $SERVICE
   $SERVICE &
   PID=`pidof $SERVICE`
 done
-
 # restart
 killall vendor.qti.hardware.vibrator.service\
  vendor.qti.hardware.vibrator.service.oneplus9\
@@ -75,6 +77,10 @@ killall vendor.qti.hardware.vibrator.service\
  android.hardware.sensors@2.0-service-mediatek\
  android.hardware.sensors@2.0-service.multihal\
  android.hardware.health-service.qti
+}
+
+# dolby
+#ddolby_service
 
 # wait
 sleep 20
@@ -144,19 +150,23 @@ UID=`dumpsys package $PKG 2>/dev/null | grep -m 1 userId= | sed 's|    userId=||
 if [ "$UID" -gt 9999 ]; then
   UIDOPS=`appops get --uid "$UID"`
 fi
+pm enable $PKG/.ui.introduction.IntroductionActivity
+pm enable $PKG/.ui.LauncherActivity
 
 # grant
 PKG=com.dolby.daxservice
-if [ "$API" -ge 31 ]; then
-  pm grant $PKG android.permission.BLUETOOTH_CONNECT
-fi
-if [ "$API" -ge 30 ]; then
-  appops set $PKG AUTO_REVOKE_PERMISSIONS_IF_UNUSED ignore
-fi
-PKGOPS=`appops get $PKG`
-UID=`dumpsys package $PKG 2>/dev/null | grep -m 1 userId= | sed 's|    userId=||g'`
-if [ "$UID" -gt 9999 ]; then
-  UIDOPS=`appops get --uid "$UID"`
+if appops get $PKG > /dev/null 2>&1; then
+  if [ "$API" -ge 31 ]; then
+    pm grant $PKG android.permission.BLUETOOTH_CONNECT
+  fi
+  if [ "$API" -ge 30 ]; then
+    appops set $PKG AUTO_REVOKE_PERMISSIONS_IF_UNUSED ignore
+  fi
+  PKGOPS=`appops get $PKG`
+  UID=`dumpsys package $PKG 2>/dev/null | grep -m 1 userId= | sed 's|    userId=||g'`
+  if [ "$UID" -gt 9999 ]; then
+    UIDOPS=`appops get --uid "$UID"`
+  fi
 fi
 
 # function
@@ -184,24 +194,19 @@ else
 fi
 check_audioserver
 }
-
-# check
+check_service() {
 for SERVICE in $SERVICES; do
   if ! pidof $SERVICE; then
     $SERVICE &
     PID=`pidof $SERVICE`
   fi
 done
-PIDS=`pidof vendor.dolby.media.c2@1.0-service`
-FILE=/dev/cpuset/foreground/tasks
-if [ "$PIDS" ]; then
-  for PID in $PIDS; do
-    if ! grep $PID $FILE; then
-      echo $PID > $FILE
-    fi
-  done
-fi
-PROC="com.dolby.daxservice com.motorola.dolby.dolbyui"
+}
+
+# check
+#dcheck_service
+PROC=com.motorola.dolby.dolbyui
+#dPROC="com.dolby.daxservice com.motorola.dolby.dolbyui"
 killall $PROC
 check_audioserver
 

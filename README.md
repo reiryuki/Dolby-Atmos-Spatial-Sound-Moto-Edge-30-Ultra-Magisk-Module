@@ -8,7 +8,7 @@
 - Equalizers soundfx ported from Motorola Edge 30 Ultra (eqs) and integrated as a Magisk Module for all supported and rooted devices with Magisk
 - Dolby Atmos and Spatial Sound
 - Global type soundfx
-- Changes/spoofs ro.product.brand to motorola which may break some system apps and features functionality
+- Dolby Atmos changes/spoofs ro.product.brand to motorola which may break some system apps and features functionality
 - Doesn't support auxiliary cable
 
 ## Sources
@@ -20,8 +20,9 @@
 - https://t.me/androidryukimods/1527
 
 ## Requirements
-- Android 11 and up
-- Architecture 64 bit
+- Architecture 64 bit for Dolby Atmos
+- Android 11 and up for Dolby Atmos
+- Android 8 and up for Spatial Sound
 - Magisk or KernelSU installed (Recommended to use Magisk Delta for systemless early init mount manifest.xml if your ROM is Read-Only https://t.me/androidryukimodsdiscussions/100091)
 - Moto Core Magisk Module installed https://github.com/reiryuki/Moto-Core-Magisk-Module except you are in Motorola ROM
 

@@ -1,1 +1,2 @@
 com.motorola.dolby.dolbyui
+com.dolby.daxservice
