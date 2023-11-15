@@ -1,4 +1,4 @@
-# Dolby Atmos Moto Edge 30 Ultra Magisk Module
+# Dolby Atmos and Spatial Sound Moto Edge 30 Ultra Magisk Module
 
 ## DISCLAIMER
 - Motorola & Dolby apps and blobs are owned by Motorola™ & Dolby™.
