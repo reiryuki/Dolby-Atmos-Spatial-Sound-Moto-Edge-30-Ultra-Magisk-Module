@@ -1,3 +1,5 @@
+## Dolby
+
 # debug
 allow system_server system_file file write
 
@@ -70,11 +72,15 @@ allow audioserver audioserver capability2 block_suspend
 allow hal_audio_default hal_audio_default capability { sys_nice dac_override sys_admin dac_read_search }
 allow mtk_hal_audio mtk_hal_audio capability { sys_nice dac_override sys_admin dac_read_search }
 allow audioserver audioserver capability { sys_nice dac_override sys_admin dac_read_search }
+allow hal_audio_default hal_audio_default tcp_socket create
+allow mtk_hal_audio mtk_hal_audio tcp_socket create
+allow audioserver audioserver tcp_socket create
 
 
+## Spatial
 
-
-
+# file
+allow { system_app priv_app platform_app untrusted_app_29 untrusted_app_27 untrusted_app } vendor_audio_prop file { read open getattr map }
 
 
 

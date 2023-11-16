@@ -217,7 +217,7 @@ rm -rf $MODPATH/system_dolby
 
 # name
 if [ $DOLBY != true ]; then
-  ui_print "- Deactivating Dolby Atmos..."
+  ui_print "- Using Spatial Sound only"
   MODNAME2='Spatial Sound Moto Edge 30 Ultra'
   sed -i "s|$MODNAME|$MODNAME2|g" $MODPATH/module.prop
   MODNAME=$MODNAME2
