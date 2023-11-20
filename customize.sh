@@ -902,6 +902,60 @@ if [ $DOLBY == true ]; then
 fi
 
 # function
+rename_file() {
+ui_print "- Renaming"
+ui_print "$FILE"
+ui_print "  to"
+ui_print "$MODFILE"
+mv -f $FILE $MODFILE
+ui_print " "
+}
+change_name() {
+if grep -q $NAME $FILE; then
+  ui_print "- Changing $NAME to $NAME2 at"
+  ui_print "$FILE"
+  ui_print "  Please wait..."
+  sed -i "s|$NAME|$NAME2|g" $FILE
+  ui_print " "
+fi
+}
+
+# mod
+if [ $DOLBY == true ]\
+&& [ "`grep_prop dolby.mod $OPTIONALS`" != 0 ]; then
+  NAME=libswdap.so
+  NAME2=libswdlb.so
+  if [ "$IS64BIT" == true ]; then
+    FILE=$MODPATH/system/vendor/lib64/soundfx/$NAME
+    MODFILE=$MODPATH/system/vendor/lib64/soundfx/$NAME2
+    rename_file
+  fi
+  if [ "$LIST32BIT" ]; then
+    FILE=$MODPATH/system/vendor/lib/soundfx/$NAME
+    MODFILE=$MODPATH/system/vendor/lib/soundfx/$NAME2
+    rename_file
+  fi
+  FILE="$MODPATH/system/vendor/lib*/soundfx/$NAME2
+$MODPATH/.aml.sh"
+  change_name
+  NAME=libhwdap.so
+  NAME2=libhwdlb.so
+  if [ "$IS64BIT" == true ]; then
+    FILE=$MODPATH/system/vendor/lib64/soundfx/$NAME
+    MODFILE=$MODPATH/system/vendor/lib64/soundfx/$NAME2
+    rename_file
+  fi
+  if [ "$LIST32BIT" ]; then
+    FILE=$MODPATH/system/vendor/lib/soundfx/$NAME
+    MODFILE=$MODPATH/system/vendor/lib/soundfx/$NAME2
+    rename_file
+  fi
+  FILE="$MODPATH/system/vendor/lib*/soundfx/$NAME2
+$MODPATH/.aml.sh"
+  change_name
+fi
+
+# function
 file_check_vendor() {
 for FILE in $FILES; do
   DES=$VENDOR$FILE
