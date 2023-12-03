@@ -14,6 +14,7 @@ resetprop ro.product.brand motorola
 resetprop -p --delete persist.vendor.audio_fx.current
 resetprop -n persist.vendor.audio_fx.current dolby
 resetprop ro.vendor.dolby.dax.version DAX3_3.8.5.20_r1
+resetprop ro.dolby.mod_uuid false
 resetprop vendor.audio.dolby.ds2.enabled false
 resetprop vendor.audio.dolby.ds2.hardbypass false
 }

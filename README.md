@@ -9,7 +9,8 @@
 - Dolby Atmos and Spatial Sound
 - Global type soundfx
 - Dolby Atmos changes/spoofs ro.product.brand to motorola which may break some system apps and features functionality
-- Doesn't support auxiliary cable
+- Dolby Atmos doesn't support auxiliary cable
+- Dolby Atmos conflicted with vendor.dolby_v3_6.hardware.dms360@2.0-service
 
 ## Sources
 - https://dumps.tadiphone.dev/dumps/motorola/eqs user-13-T1SQ33.15-11-137-10-71a49-release-keys
