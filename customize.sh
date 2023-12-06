@@ -308,12 +308,12 @@ if [ $DOLBY == true ]; then
            DolbyAtmos360"
   fi
   conflict
-  NAMES=SoundEnhancement
+  NAMES=MiSound
   FILE=/data/adb/modules/$NAMES/module.prop
-  if grep -q 'Dolby Atmos Xperia' $FILE; then
+  if grep -q 'and Dolby Atmos' $FILE; then
     conflict
   fi
-  NAMES=MiSound
+  NAMES=SoundEnhancement
   FILE=/data/adb/modules/$NAMES/module.prop
   if grep -q 'and Dolby Atmos' $FILE; then
     conflict
@@ -376,16 +376,32 @@ fi
 }
 backup() {
 if [ ! -f $FILE.orig ] && [ ! -f $FILE.bak ]; then
-  cp -af $FILE $FILE.orig
-  if [ -f $FILE.orig ]; then
-    ui_print "- Created"
-    ui_print "$FILE.orig"
-  else
-    ui_print "- Failed to create"
-    ui_print "$FILE.orig"
-    ui_print "  Probably Read-Only or no space left"
+  ui_print "- Checking free space..."
+  SIZE=`du $FILE | sed "s|$FILE||g"`
+  SIZE=$(( $SIZE + 1 ))
+  INFO=`df $FILE`
+  FREE=`echo "$INFO" | awk 'NR==3{print $3}'`
+  if [ ! "$FREE" ]; then
+    FREE=`echo "$INFO" | awk 'NR==2{print $4}'`
   fi
+  ui_print "$INFO"
+  ui_print "  Free space = $FREE KiB"
+  ui_print "  Free space required = $SIZE KiB"
   ui_print " "
+  if [ "$FREE" -ge "$SIZE" ]; then
+    cp -af $FILE $FILE.orig
+    if [ -f $FILE.orig ]; then
+      ui_print "- Created"
+      ui_print "$FILE.orig"
+      ui_print "  This file will not be restored automatically even you"
+      ui_print "  have uninstalled this module."
+    else
+      ui_print "- Failed to create"
+      ui_print "$FILE.orig"
+      ui_print "  The partition is Read-Only"
+    fi
+    ui_print " "
+  fi
 fi
 }
 patch_manifest() {
@@ -632,19 +648,16 @@ if [ $DOLBY == true ]; then
         $MAGISKTMP/mirror/*/*/etc/vintf/manifest/*.xml
         /*/etc/vintf/manifest/*.xml /*/*/etc/vintf/manifest/*.xml"
   if [ "`grep_prop dolby.skip.vendor $OPTIONALS`" != 1 ]\
-  && ! df -h $VENDOR | grep 100%\
   && ! grep -A2 vendor.dolby.hardware.dms $FILE | grep -q 2.0; then
     FILE=$VENDOR/etc/vintf/manifest.xml
     patch_manifest
   fi
   if [ "`grep_prop dolby.skip.system $OPTIONALS`" != 1 ]\
-  && ! df -h $SYSTEM | grep 100%\
   && ! grep -A2 vendor.dolby.hardware.dms $FILE | grep -q 2.0; then
     FILE=$SYSTEM/etc/vintf/manifest.xml
     patch_manifest
   fi
   if [ "`grep_prop dolby.skip.system_ext $OPTIONALS`" != 1 ]\
-  && ! df -h $SYSTEM_EXT | grep 100%\
   && ! grep -A2 vendor.dolby.hardware.dms $FILE | grep -q 2.0; then
     FILE=$SYSTEM_EXT/etc/vintf/manifest.xml
     patch_manifest
@@ -668,19 +681,16 @@ if [ $DOLBY == true ]; then
         /*/etc/selinux/*_hwservice_contexts
         /*/*/etc/selinux/*_hwservice_contexts"
   if [ "`grep_prop dolby.skip.vendor $OPTIONALS`" != 1 ]\
-  && ! df -h $VENDOR | grep 100%\
   && ! grep -Eq 'u:object_r:hal_dms_hwservice:s0|u:object_r:default_android_hwservice:s0' $FILE; then
     FILE=$VENDOR/etc/selinux/vendor_hwservice_contexts
     patch_hwservice
   fi
   if [ "`grep_prop dolby.skip.system $OPTIONALS`" != 1 ]\
-  && ! df -h $SYSTEM | grep 100%\
   && ! grep -Eq 'u:object_r:hal_dms_hwservice:s0|u:object_r:default_android_hwservice:s0' $FILE; then
     FILE=$SYSTEM/etc/selinux/plat_hwservice_contexts
     patch_hwservice
   fi
   if [ "`grep_prop dolby.skip.system_ext $OPTIONALS`" != 1 ]\
-  && ! df -h $SYSTEM_EXT | grep 100%\
   && ! grep -Eq 'u:object_r:hal_dms_hwservice:s0|u:object_r:default_android_hwservice:s0' $FILE; then
     FILE=$SYSTEM_EXT/etc/selinux/system_ext_hwservice_contexts
     patch_hwservice
@@ -765,6 +775,7 @@ PROP=`grep_prop stream.mode $OPTIONALS`
 if echo "$PROP" | grep -q m; then
   ui_print "- Activating music stream..."
   sed -i 's|#m||g' $FILE
+  sed -i 's|musicstream=|musicstream=true|g' $MODPATH/acdb.conf
   ui_print " "
 else
   APPS=AudioFX
@@ -1041,16 +1052,6 @@ if [ "`grep_prop fix.vendor_overlay $OPTIONALS`" == 1 ]\
   cp -rf $DIR/*/* $MODPATH/system/vendor
   ui_print " "
 fi
-
-# uninstaller
-NAME=DolbyModuleUninstaller.zip
-if [ $DOLBY == true ]; then
-  cp -f $MODPATH/$NAME /sdcard
-  ui_print "- Flash /sdcard/$NAME"
-  ui_print "  via recovery only if you got bootloop"
-  ui_print " "
-fi
-rm -f $MODPATH/$NAME
 
 # run
 . $MODPATH/copy.sh
