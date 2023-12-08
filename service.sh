@@ -82,8 +82,8 @@ killall vendor.qti.hardware.vibrator.service\
  android.hardware.sensors@2.0-service\
  android.hardware.sensors@2.0-service-mediatek\
  android.hardware.sensors@2.0-service.multihal\
- android.hardware.health-service.qti\
- vendor.qti.hardware.display.allocator-service
+ android.hardware.health-service.qti
+#skillall vendor.qti.hardware.display.allocator-service
 }
 
 # dolby

@@ -665,6 +665,7 @@ if [ $DOLBY == true ]; then
   if ! grep -A2 vendor.dolby.hardware.dms $FILE | grep -q 2.0; then
     patch_manifest_eim
     if [ $EIM == false ]; then
+      sed -i 's|#s||g' $MODPATH/service.sh
       ui_print "- Using systemless manifest.xml patch."
       ui_print "  On some ROMs, it causes bugs or even makes bootloop"
       ui_print "  because not allowed to restart hwservicemanager."
@@ -1030,8 +1031,8 @@ FILE=$MODPATH/service.sh
 if [ "`grep_prop audio.rotation $OPTIONALS`" == 1 ]; then
   ui_print "- Enables ro.audio.monitorRotation=true"
   sed -i '1i\
-resetprop ro.audio.monitorRotation true\
-resetprop ro.audio.monitorWindowRotation true' $FILE
+resetprop -n ro.audio.monitorRotation true\
+resetprop -n ro.audio.monitorWindowRotation true' $FILE
   ui_print " "
 fi
 
