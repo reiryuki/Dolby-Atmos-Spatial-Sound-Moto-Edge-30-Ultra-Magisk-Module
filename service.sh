@@ -21,8 +21,8 @@ resetprop -n vendor.audio.dolby.ds2.hardbypass false
 
 # property
 resetprop -n ro.audio.ignore_effects false
-#ddolby_prop
 resetprop -n ro.vendor.audio.moto_sst_supported true
+#ddolby_prop
 
 # restart
 if [ "$API" -ge 24 ]; then
