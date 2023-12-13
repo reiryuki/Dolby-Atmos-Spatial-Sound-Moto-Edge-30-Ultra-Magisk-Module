@@ -128,7 +128,7 @@ ui_print "  Please wait..."
 if ! grep -q $NAME $FILE; then
   ui_print "  Function not found."
   ui_print "  Using new $DIR/$LIB"
-  mv -f $MODPATH/system_support$DIR/$LIB $MODPATH/system_dolby$DIR
+  mv -f $MODPATH/system_support$DIR/$LIB $MODPATH/system$DIR
 fi
 ui_print " "
 }
