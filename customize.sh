@@ -255,11 +255,11 @@ fi
 ui_print "- Cleaning..."
 if [ $DOLBY == true ]; then
   PKGS=`cat $MODPATH/package-dolby.txt`
-  if [ "`grep_prop dolby.mod $OPTIONALS`" == 0 ]; then
-    rm -f /data/vendor/dolby/dax_sqlite3.db
-  else
+  if [ "`grep_prop dolby.mod $OPTIONALS`" == 1 ]; then
     rm -f /data/vendor/dolby/dap_sqlite3.db
     sed -i 's|dax_sqlite3.db|dap_sqlite3.db|g' $MODPATH/uninstall.sh
+  else
+    rm -f /data/vendor/dolby/dax_sqlite3.db
   fi
 else
   PKGS=`cat $MODPATH/package.txt`
@@ -300,12 +300,12 @@ done
 
 # conflict
 if [ $DOLBY == true ]; then
-  if [ "`grep_prop dolby.mod $OPTIONALS`" == 0 ]; then
-    NAMES="dolbyatmos DolbyAtmos MotoDolby DolbyAudio
-           DolbyAtmos360 dsplus Dolby"
-  else
+  if [ "`grep_prop dolby.mod $OPTIONALS`" == 1 ]; then
     NAMES="dolbyatmos DolbyAtmos MotoDolby DolbyAudio
            DolbyAtmos360"
+  else
+    NAMES="dolbyatmos DolbyAtmos MotoDolby DolbyAudio
+           DolbyAtmos360 dsplus Dolby"
   fi
   conflict
   NAMES=MiSound
@@ -952,7 +952,7 @@ fi
 
 # mod
 if [ $DOLBY == true ]\
-&& [ "`grep_prop dolby.mod $OPTIONALS`" != 0 ]; then
+&& [ "`grep_prop dolby.mod $OPTIONALS`" == 1 ]; then
   NAME=dax-default.xml
   NAME2=dap-default.xml
   FILE=$MODPATH/system/vendor/etc/dolby/$NAME
@@ -1043,6 +1043,35 @@ if [ "`grep_prop disable.raw $OPTIONALS`" == 0 ]; then
   ui_print " "
 else
   sed -i 's|#u||g' $FILE
+fi
+
+# function
+file_check_vendor() {
+for FILE in $FILES; do
+  DES=$VENDOR$FILE
+  DES2=$ODM$FILE
+  if [ -f $DES ] || [ -f $DES2 ]; then
+    ui_print "- Detected $FILE"
+    ui_print " "
+    rm -f $MODPATH/system/vendor$FILE
+  fi
+done
+}
+
+# check
+if [ "$IS64BIT" == true ]; then
+  FILES="/lib64/libdeccfg.so
+         /lib64/libstagefrightdolby.so
+         /lib64/libstagefright_soft_ddpdec.so
+         /lib64/libstagefright_soft_ac4dec.so"
+  file_check_vendor
+fi
+if [ "$LIST32BIT" ]; then
+  FILES="/lib/libdeccfg.so
+         /lib/libstagefrightdolby.so
+         /lib/libstagefright_soft_ddpdec.so
+         /lib/libstagefright_soft_ac4dec.so"
+  file_check_vendor
 fi
 
 # vendor_overlay
