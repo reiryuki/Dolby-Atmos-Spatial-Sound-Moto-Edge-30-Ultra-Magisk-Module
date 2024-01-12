@@ -54,7 +54,7 @@
 - Global: https://t.me/androidryukimodsdiscussions/29836
 
 ## Tested on
-- Android 13 CrDroid ROM
+- Android 13 CrDroid ROM & AlphaDroid ROM
 
 ## Support & Bug Report
 - https://t.me/androidryukimodsdiscussions/2618
