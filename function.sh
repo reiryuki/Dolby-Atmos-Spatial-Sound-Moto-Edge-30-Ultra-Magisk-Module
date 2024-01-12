@@ -91,7 +91,7 @@ return 1
 }
 unmount_mirror() {
 if [ "$BOOTMODE" == true ]\
-&& [ "$HASMIRROR" != true ]; then
+&& [ "$HASMIRROR" == false ]; then
   FOLDS="$MIRROR/* $MIRROR"
   for FOLD in $FOLDS; do
     umount $FOLD
