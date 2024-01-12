@@ -91,23 +91,6 @@ magisk_setup
 
 # path
 SYSTEM=`realpath $MIRROR/system`
-if [ "$BOOTMODE" == true ]; then
-  if [ ! -d $MIRROR/vendor ]; then
-    mount_vendor_to_mirror
-  fi
-  if [ ! -d $MIRROR/product ]; then
-    mount_product_to_mirror
-  fi
-  if [ ! -d $MIRROR/system_ext ]; then
-    mount_system_ext_to_mirror
-  fi
-  if [ ! -d $MIRROR/odm ]; then
-    mount_odm_to_mirror
-  fi
-  if [ ! -d $MIRROR/my_product ]; then
-    mount_my_product_to_mirror
-  fi
-fi
 VENDOR=`realpath $MIRROR/vendor`
 PRODUCT=`realpath $MIRROR/product`
 SYSTEM_EXT=`realpath $MIRROR/system_ext`
@@ -128,7 +111,7 @@ ui_print "$FILE"
 ui_print "  Please wait..."
 if ! grep -q $NAME $FILE; then
   ui_print "  Function not found."
-  ui_print "  Using new $DIR/$LIB"
+  ui_print "  Replaces /system$DIR/$LIB"
   mv -f $MODPATH/system_support$DIR/$LIB $MODPATH/system$DIR
 fi
 ui_print " "
@@ -439,24 +422,24 @@ early_init_mount_dir() {
 if echo $MAGISK_VER | grep -Eq 'delta|Delta|kitsune'\
 && [ "`grep_prop dolby.skip.early $OPTIONALS`" != 1 ]; then
   EIM=true
-  if [ "$BOOTMODE" == true ]\
-  && [ -L $MIRROR/early-mount ]; then
-    EIMDIR=`readlink $MIRROR/early-mount`
-    [ "${EIMDIR:0:1}" != "/" ] && EIMDIR="$MIRROR/$EIMDIR"
-  elif [ "$BOOTMODE" == true ]\
-  && [ "$MAGISK_VER_CODE" -ge 26000 ]\
-  && [ -d $MAGISKTMP/preinit ]; then
-    MOUNT=`mount | grep $MAGISKTMP/preinit`
-    BLOCK=`echo $MOUNT | sed 's| on.*||g'`
-    DIR=`mount | sed "s|$MOUNT||g" | grep -m 1 $BLOCK`
-    DIR=`echo $DIR | sed "s|$BLOCK on ||g" | sed 's| type.*||g'`
-    if [ "$DIR" ]; then
-      EIMDIR=$DIR/early-mount.d
-    else
-      ui_print "! It seems Magisk early init mount directory is not"
-      ui_print "  activated yet. Please reinstall Magisk.zip via Magisk app"
-      ui_print "  (not via Recovery)."
-      ui_print " "
+  if [ "$BOOTMODE" == true ]; then
+    if [ -L $MIRROR/early-mount ]; then
+      EIMDIR=`readlink $MIRROR/early-mount`
+      [ "${EIMDIR:0:1}" != "/" ] && EIMDIR="$MIRROR/$EIMDIR"
+    elif [ "$MAGISK_VER_CODE" -ge 26000 ]\
+    && [ -d $INTERNALDIR/preinit ]; then
+      MOUNT=`mount | grep $INTERNALDIR/preinit`
+      BLOCK=`echo $MOUNT | sed 's| on.*||g'`
+      DIR=`mount | sed "s|$MOUNT||g" | grep -m 1 $BLOCK`
+      DIR=`echo $DIR | sed "s|$BLOCK on ||g" | sed 's| type.*||g'`
+      if [ "$DIR" ]; then
+        EIMDIR=$DIR/early-mount.d
+      else
+        ui_print "! It seems Magisk early init mount directory is not"
+        ui_print "  activated yet. Please reinstall Magisk.zip via Magisk app"
+        ui_print "  (not via Recovery)."
+        ui_print " "
+      fi
     fi
   fi
   if [ ! "$EIMDIR" ]; then
@@ -620,11 +603,11 @@ rm -rf $MODPATH/system_support
 
 # patch manifest.xml
 if [ $DOLBY == true ]; then
-  FILE="$MAGISKTMP/mirror/*/etc/vintf/manifest.xml
-        $MAGISKTMP/mirror/*/*/etc/vintf/manifest.xml
+  FILE="$INTERNALDIR/mirror/*/etc/vintf/manifest.xml
+        $INTERNALDIR/mirror/*/*/etc/vintf/manifest.xml
         /*/etc/vintf/manifest.xml /*/*/etc/vintf/manifest.xml
-        $MAGISKTMP/mirror/*/etc/vintf/manifest/*.xml
-        $MAGISKTMP/mirror/*/*/etc/vintf/manifest/*.xml
+        $INTERNALDIR/mirror/*/etc/vintf/manifest/*.xml
+        $INTERNALDIR/mirror/*/*/etc/vintf/manifest/*.xml
         /*/etc/vintf/manifest/*.xml /*/*/etc/vintf/manifest/*.xml"
   if [ "`grep_prop dolby.skip.vendor $OPTIONALS`" != 1 ]\
   && ! grep -A2 vendor.dolby.hardware.dms $FILE | grep -q 2.0; then
@@ -656,8 +639,8 @@ fi
 
 # patch hwservice contexts
 if [ $DOLBY == true ]; then
-  FILE="$MAGISKTMP/mirror/*/etc/selinux/*_hwservice_contexts
-        $MAGISKTMP/mirror/*/*/etc/selinux/*_hwservice_contexts
+  FILE="$INTERNALDIR/mirror/*/etc/selinux/*_hwservice_contexts
+        $INTERNALDIR/mirror/*/*/etc/selinux/*_hwservice_contexts
         /*/etc/selinux/*_hwservice_contexts
         /*/*/etc/selinux/*_hwservice_contexts"
   if [ "`grep_prop dolby.skip.vendor $OPTIONALS`" != 1 ]\
@@ -1067,9 +1050,7 @@ fi
 . $MODPATH/.aml.sh
 
 # unmount
-if [ "$BOOTMODE" == true ] && [ ! "$MAGISKPATH" ]; then
-  unmount_mirror
-fi
+unmount_mirror
 
 
 
