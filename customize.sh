@@ -49,6 +49,39 @@ else
 fi
 ui_print " "
 
+# bit
+if [ "$IS64BIT" == true ]; then
+  ui_print "- 64 bit architecture"
+  if [ "`grep_prop moto.dolby $OPTIONALS`" == 0 ]; then
+    DOLBY=false
+  else
+    DOLBY=true
+  fi
+  if [ $DOLBY == true ]\
+  && [ "`grep_prop dolby.codec $OPTIONALS`" == 1 ]; then
+    CODEC=true
+  else
+    CODEC=false
+  fi
+  ui_print " "
+  # 32 bit
+  if [ "$LIST32BIT" ]; then
+    ui_print "- 32 bit library support"
+  else
+    ui_print "- Doesn't support 32 bit library"
+    rm -rf $MODPATH/armeabi-v7a $MODPATH/x86\
+     $MODPATH/system*/lib $MODPATH/system*/vendor/lib
+  fi
+  ui_print " "
+else
+  ui_print "- 32 bit architecture"
+  rm -rf `find $MODPATH -type d -name *64*`
+  ui_print "  ! Unsupported Dolby Atmos."
+  DOLBY=false
+  CODEC=false
+  ui_print " "
+fi
+
 # sdk
 NUM=26
 if [ "$API" -lt $NUM ]; then
@@ -58,14 +91,8 @@ if [ "$API" -lt $NUM ]; then
   abort
 else
   ui_print "- SDK $API"
-  if [ "`grep_prop moto.dolby $OPTIONALS`" != 0 ]; then
-    if [ "$API" -lt 30 ]; then
-      ui_print "  ! Unsupported Dolby Atmos."
-      DOLBY=false
-    else
-      DOLBY=true
-    fi
-  else
+  if [ $DOLBY == true ] && [ "$API" -lt 30 ]; then
+    ui_print "  ! Unsupported Dolby Atmos."
     DOLBY=false
   fi
   ui_print " "
@@ -101,106 +128,78 @@ MY_PRODUCT=`realpath $MIRROR/my_product`
 mv -f $MODPATH/aml.sh $MODPATH/.aml.sh
 
 # function
-run_check_function() {
-LISTS=`strings $MODPATH/system_dolby/vendor$DIR/$DES | grep ^lib | grep .so`
-FILE=`for LIST in $LISTS; do echo $SYSTEM$DIR/$LIST; done`
-ui_print "- Checking"
-ui_print "$NAME"
-ui_print "  function at"
-ui_print "$FILE"
-ui_print "  Please wait..."
-if ! grep -q $NAME $FILE; then
-  ui_print "  Function not found."
-  ui_print "  Replaces /system$DIR/$LIB"
-  mv -f $MODPATH/system_support$DIR/$LIB $MODPATH/system$DIR
+check_function_2() {
+if [ -f $MODPATH/system_support$DIR/$LIB ]; then
+  ui_print "- Checking"
+  ui_print "$NAME"
+  ui_print "  function at"
+  ui_print "$FILE"
+  ui_print "  Please wait..."
+  if ! grep -q $NAME $FILE; then
+    ui_print "  Function not found."
+    ui_print "  Replaces /system$DIR/$LIB."
+    mv -f $MODPATH/system_support$DIR/$LIB $MODPATH/system$DIR
+    [ "$MES" ] && ui_print "$MES"
+  fi
+  ui_print " "
 fi
-ui_print " "
 }
 check_function() {
-if [ "$IS64BIT" == true ]; then
-  DIR=/lib64
-  run_check_function
-fi
-if [ "$LIST32BIT" ] && [ $DOLBY32 == true ]; then
-  DIR=/lib
-  run_check_function
+if [ -d $MODPATH/system_support/vendor$DIR/hw ]; then
+  ui_print "- Checking"
+  ui_print "$NAME"
+  ui_print "  function at"
+  ui_print "$FILE"
+  ui_print "  Please wait..."
+  if grep -q $NAME $FILE; then
+    ui_print " "
+  else
+    ui_print "  Function not found."
+    ui_print "  Replaces /vendor$DIR/hw/*audio*.so."
+    mv -f $MODPATH/system_support/vendor$DIR/hw $MODPATH/system/vendor$DIR
+    [ "$MES" ] && ui_print "$MES"
+    ui_print " "
+    FILE=$SYSTEM$DIR/$LIB
+    check_function_2
+  fi
 fi
 }
 
-# bit
-if [ "$IS64BIT" == true ]; then
-  ui_print "- 64 bit architecture"
+# check
+if [ $DOLBY == true ]; then
+  ui_print "- Activating Dolby Atmos..."
   ui_print " "
-  # 32 bit
-  if [ "$LIST32BIT" ]; then
-    ui_print "- 32 bit library support"
-  else
-    ui_print "- Doesn't support 32 bit library"
-    rm -rf $MODPATH/armeabi-v7a $MODPATH/x86\
-     $MODPATH/system*/lib $MODPATH/system*/vendor/lib
-  fi
-  ui_print " "
-  # check
+  MES="  Dolby Atmos may not work."
   NAME=_ZN7android23sp_report_stack_pointerEv
-  if [ $DOLBY == true ]; then
-    ui_print "- Activating Dolby Atmos..."
-    ui_print " "
-    FILE=$VENDOR/lib64/hw/*audio*.so
-    ui_print "- Checking"
-    ui_print "$NAME"
-    ui_print "  function at"
-    ui_print "$FILE"
-    ui_print "  Please wait..."
-    if grep -q $NAME $FILE; then
-      DOLBY=true
-    else
-      ui_print "  ! Function not found."
-      ui_print "    Unsupported Dolby Atmos."
-      DOLBY=false
-    fi
-    ui_print " "
-  fi
-  if [ $DOLBY == true ] && [ "$LIST32BIT" ]; then
-    FILE=$VENDOR/lib/hw/*audio*.so
-    ui_print "- Checking"
-    ui_print "$NAME"
-    ui_print "  function at"
-    ui_print "$FILE"
-    ui_print "  Please wait..."
-    if grep -q $NAME $FILE; then
-      DOLBY32=true
-    else
-      ui_print "  Function not found."
-      DOLBY32=false
-      rm -rf $MODPATH/system_dolby/lib $MODPATH/system_dolby/vendor/lib
-    fi
-    ui_print " "
-  fi
-  # check
-  NAME=_ZN7android8hardware23getOrCreateCachedBinderEPNS_4hidl4base4V1_05IBaseE
-  DES=vendor.dolby.hardware.dms@2.0.so
   LIB=libhidlbase.so
-  if [ $DOLBY == true ]; then
+  if [ "$IS64BIT" == true ]; then
+    DIR=/lib64
+    FILE=$VENDOR$DIR/hw/*audio*.so
     check_function
   fi
-  if [ $DOLBY == true ]; then
-    cp -rf $MODPATH/system_dolby/* $MODPATH/system
-    sed -i 's|#d||g' $MODPATH/.aml.sh
-    sed -i 's|#d||g' $MODPATH/*.sh
+  if [ "$LIST32BIT" ]; then
+    DIR=/lib
+    FILE=$VENDOR$DIR/hw/*audio*.so
+    check_function
   fi
+  NAME=_ZN7android8hardware23getOrCreateCachedBinderEPNS_4hidl4base4V1_05IBaseE
+  DES=vendor.dolby.hardware.dms@2.0.so
+  if [ "$IS64BIT" == true ]; then
+    DIR=/lib64
+    LISTS=`strings $MODPATH/system_dolby/vendor$DIR/$DES | grep ^lib | grep .so`
+    FILE=`for LIST in $LISTS; do echo $SYSTEM$DIR/$LIST; done`
+    check_function_2
+  fi
+  if [ "$LIST32BIT" ]; then
+    DIR=/lib
+    LISTS=`strings $MODPATH/system_dolby/vendor$DIR/$DES | grep ^lib | grep .so`
+    FILE=`for LIST in $LISTS; do echo $SYSTEM$DIR/$LIST; done`
+    check_function_2
+  fi
+  cp -rf $MODPATH/system_dolby/* $MODPATH/system
+  sed -i 's|#d||g' $MODPATH/.aml.sh
+  sed -i 's|#d||g' $MODPATH/*.sh
 else
-  ui_print "- 32 bit architecture"
-  rm -rf `find $MODPATH -type d -name *64*`
-  if [ $DOLBY == true ]; then
-    ui_print "  ! Unsupported Dolby Atmos."
-  fi
-  DOLBY=false
-  ui_print " "
-fi
-rm -rf $MODPATH/system_dolby
-
-# name
-if [ $DOLBY != true ]; then
   ui_print "- Using Spatial Sound only"
   MODNAME2='Spatial Sound Moto Edge 30 Ultra'
   sed -i "s|$MODNAME|$MODNAME2|g" $MODPATH/module.prop
@@ -208,6 +207,100 @@ if [ $DOLBY != true ]; then
   sed -i 's|pm enable|pm disable|g' $MODPATH/service.sh
   ui_print " "
 fi
+rm -rf $MODPATH/system_dolby
+
+# check
+if [ $CODEC == true ]; then
+  NAME=vendor.dolby.media.c2@*-service
+  FILE=`find $VENDOR/bin/hw $SYSTEM/bin/hw $ODM/bin/hw\
+         $SYSTEM_EXT/bin/hw $PRODUCT/bin/hw -type f -name\
+         $NAME`
+  if [ "$FILE" ]; then
+    ui_print "- Built-in"
+    ui_print "$FILE"
+    ui_print " is detected"
+    CODEC=false
+    ui_print " "
+  fi
+fi
+
+# function
+file_check_vendor_codec() {
+for FILE in $FILES; do
+  DES=$VENDOR$FILE
+  DES2=$ODM$FILE
+  if [ -f $DES ] || [ -f $DES2 ]; then
+    ui_print "- Detected $FILE"
+    ui_print " "
+    rm -f $MODPATH/system_codec/vendor$FILE
+  fi
+done
+}
+
+# check
+if [ $CODEC == true ]; then
+  DIR=/lib64
+  FILES="$DIR/android.hardware.media.c2@1.0.so
+         $DIR/android.hardware.media.c2@1.1.so
+         $DIR/android.hardware.media.c2@1.2.so
+         $DIR/libcodec2_hidl@1.0.so
+         $DIR/libcodec2_hidl@1.1.so
+         $DIR/libcodec2_hidl@1.2.so
+         $DIR/libcodec2_hidl@1.0.so
+         $DIR/libcodec2_hidl_plugin.so
+         $DIR/libcodec2_vndk.so
+         $DIR/libstagefright_bufferpool@2.0.1.so"
+  file_check_vendor_codec
+  NAME=_ZN7android8hardware7details13errorWriteLogEiPKc
+  DES=libstagefright_bufferpool@2.0.1.so
+  DESFILE=$MODPATH/system_codec/vendor$DIR/$DES
+  if grep -q $NAME $DESFILE; then
+    LIB=libfmq.so
+    LISTS=`strings $DESFILE | grep ^lib | grep .so | sed "s|$DES||g"`
+    FILE=`for LIST in $LISTS; do echo $SYSTEM$DIR/$LIST; done`
+    unset MES
+    check_function_2
+  fi
+  NAME=_ZN7android19GraphicBufferSource9configureERKNS_2spINS_16ComponentWrapperEEEiijjj
+  NAME2=_ZN7android19GraphicBufferSource9configureERKNS_2spINS_16ComponentWrapperEEEiijjm
+  DES=libcodec2_hidl@1.0.so
+  DESFILE=$MODPATH/system_codec/vendor$DIR/$DES
+  if grep -q $NAME $DESFILE; then
+    LISTS=`strings $DESFILE | grep ^lib | grep .so | sed -e "s|$DES||g"\
+            -e 's|libcodec2_vndk.so||g' -e 's|libcodec2_hidl_plugin.so||g'\
+            -e 's|libstagefright_bufferpool@2.0.1.so||g'`
+    FILE=`for LIST in $LISTS; do echo $SYSTEM$DIR/$LIST; done`
+    ui_print "- Checking"
+    ui_print "$NAME"
+    ui_print "  function at"
+    ui_print "$FILE"
+    ui_print "  Please wait..."
+    if ! grep -q $NAME $FILE; then
+      if grep -q $NAME2 $FILE; then
+        ui_print "  Changing function to"
+        ui_print "$NAME2"
+        ui_print "  at"
+        ui_print "$DESFILE"
+        sed -i "s|$NAME|$NAME2|g" $DESFILE
+      else
+        ui_print "  ! Function not found."
+        ui_print "    Unsupported Dolby C2 codecs."
+        CODEC=false
+      fi
+    fi
+    ui_print " "
+  fi
+fi
+
+# codec
+if [ $CODEC == true ]; then
+  ui_print "- Using Dolby C2 codecs"
+  cp -rf $MODPATH/system_codec/* $MODPATH/system
+  sed -i 's|#o||g' $MODPATH/service.sh
+  ui_print " "
+fi
+rm -rf $MODPATH/system_codec\
+ $MODPATH/system_support
 
 # sepolicy
 FILE=$MODPATH/sepolicy.rule
@@ -286,10 +379,10 @@ done
 if [ $DOLBY == true ]; then
   if [ "`grep_prop dolby.mod $OPTIONALS`" == 1 ]; then
     NAMES="dolbyatmos DolbyAtmos MotoDolby DolbyAudio
-           DolbyAtmos360"
+           DolbyAtmos360 DolbyAtmosSP"
   else
     NAMES="dolbyatmos DolbyAtmos MotoDolby DolbyAudio
-           DolbyAtmos360 dsplus Dolby"
+           DolbyAtmos360 DolbyAtmosSP dsplus Dolby"
   fi
   conflict
   NAMES=MiSound
@@ -504,24 +597,14 @@ else
   EIM=false
 fi
 }
-run_find_file() {
-for NAME in $NAMES; do
-  FILE=`find $SYSTEM$DIR $SYSTEM_EXT$DIR -type f -name $NAME`
-  if [ ! "$FILE" ]; then
-    ui_print "- Using /system$DIR/$NAME"
-    cp -f $MODPATH/system_support$DIR/$NAME $MODPATH/system$DIR
-    ui_print " "
-  fi
-done
-}
-find_file() {
-if [ "$IS64BIT" == true ]; then
-  DIR=/lib64
-  run_find_file
-fi
-if [ "$LIST32BIT" ]; then
-  DIR=/lib
-  run_find_file
+eim_cache_warning() {
+if echo $EIMDIR | grep -q cache; then
+  ui_print "  Please do not ever wipe your /cache"
+  ui_print "  as long as this module is installed!"
+  ui_print "  If your /cache is wiped for some reasons,"
+  ui_print "  then you need to uninstall this module and reboot first,"
+  ui_print "  then reinstall this module afterwards"
+  ui_print "  to get this module working correctly."
 fi
 }
 patch_manifest_eim() {
@@ -536,14 +619,14 @@ if [ $EIM == true ]; then
     fi
     if ! grep -A2 vendor.dolby.hardware.dms $DES | grep -q 2.0; then
       ui_print "- Patching"
-      ui_print "$SRC"
-      ui_print "  systemlessly using early init mount..."
+      ui_print "$DES"
       sed -i '/<manifest/a\
     <hal format="hidl">\
         <name>vendor.dolby.hardware.dms</name>\
         <transport>hwbinder</transport>\
         <fqname>@2.0::IDms/default</fqname>\
     </hal>' $DES
+      eim_cache_warning
       ui_print " "
     fi
   else
@@ -563,10 +646,10 @@ if [ $EIM == true ]; then
     fi
     if ! grep -Eq 'u:object_r:hal_dms_hwservice:s0|u:object_r:default_android_hwservice:s0' $DES; then
       ui_print "- Patching"
-      ui_print "$SRC"
-      ui_print "  systemlessly using early init mount..."
+      ui_print "$DES"
       sed -i '1i\
 vendor.dolby.hardware.dms::IDms u:object_r:hal_dms_hwservice:s0' $DES
+      eim_cache_warning
       ui_print " "
     fi
   else
@@ -597,13 +680,6 @@ fi
 if [ $DOLBY == true ]; then
   early_init_mount_dir
 fi
-
-# check
-NAMES="libhidltransport.so libhwbinder.so"
-#if [ $DOLBY == true ]; then
-#  find_file
-#fi
-rm -rf $MODPATH/system_support
 
 # patch manifest.xml
 if [ $DOLBY == true ]; then
@@ -962,10 +1038,10 @@ $MODPATH/system/vendor/bin/hw/vendor.dolby*.hardware.dms*@*-service"
   change_name
   NAME=$'\x45\x27\x99\x21\x85\x39'
   FILE=$MODPATH/system/vendor/lib*/soundfx/libswdlb.so
-#  change_name
+  change_name
   NAME=$'\xd5\x3e\x26\xda\x02\x53'
   FILE=$MODPATH/system/vendor/lib*/soundfx/libhwdlb.so
-#  change_name
+  change_name
   NAME=$'\xef\x93\x7f\x67\x55\x87'
   FILE=$MODPATH/system/vendor/lib*/soundfx/lib*wdlb.so
   change_name
@@ -974,41 +1050,9 @@ $MODPATH/system/vendor/bin/hw/vendor.dolby*.hardware.dms*@*-service"
   FILE=$MODPATH/.aml.sh
   change_name
   NAME=452799218539
-#  change_name
+  change_name
   NAME=d53e26da0253
-#  change_name
-fi
-
-# function
-file_check_vendor() {
-for FILE in $FILES; do
-  DES=$VENDOR$FILE
-  DES2=$ODM$FILE
-  if [ -f $DES ] || [ -f $DES2 ]; then
-    ui_print "- Detected $FILE"
-    ui_print " "
-    rm -f $MODPATH/system/vendor$FILE
-  fi
-done
-}
-
-# audio rotation
-FILE=$MODPATH/service.sh
-if [ "`grep_prop audio.rotation $OPTIONALS`" == 1 ]; then
-  ui_print "- Enables ro.audio.monitorRotation=true"
-  sed -i '1i\
-resetprop -n ro.audio.monitorRotation true\
-resetprop -n ro.audio.monitorWindowRotation true' $FILE
-  ui_print " "
-fi
-
-# raw
-FILE=$MODPATH/.aml.sh
-if [ "`grep_prop disable.raw $OPTIONALS`" == 0 ]; then
-  ui_print "- Not disables Ultra Low Latency playback (RAW)"
-  ui_print " "
-else
-  sed -i 's|#u||g' $FILE
+  change_name
 fi
 
 # function
@@ -1040,6 +1084,25 @@ if [ $DOLBY == true ]; then
            /lib/libstagefright_soft_ac4dec.so"
     file_check_vendor
   fi
+fi
+
+# audio rotation
+FILE=$MODPATH/service.sh
+if [ "`grep_prop audio.rotation $OPTIONALS`" == 1 ]; then
+  ui_print "- Enables ro.audio.monitorRotation=true"
+  sed -i '1i\
+resetprop -n ro.audio.monitorRotation true\
+resetprop -n ro.audio.monitorWindowRotation true' $FILE
+  ui_print " "
+fi
+
+# raw
+FILE=$MODPATH/.aml.sh
+if [ "`grep_prop disable.raw $OPTIONALS`" == 0 ]; then
+  ui_print "- Not disables Ultra Low Latency playback (RAW)"
+  ui_print " "
+else
+  sed -i 's|#u||g' $FILE
 fi
 
 # vendor_overlay

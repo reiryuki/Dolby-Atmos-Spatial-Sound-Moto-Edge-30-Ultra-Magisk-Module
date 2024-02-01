@@ -10,13 +10,15 @@
 - Global type soundfx
 - Dolby Atmos changes/spoofs ro.product.brand to motorola which may break some system apps and features functionality
 - Dolby Atmos doesn't support auxiliary cable
-- Dolby Atmos conflicted with `vendor.dolby_v3_6.hardware.dms360@2.0-service` & `vendor.dolby.hardware.dms@1.0-service`
+- Dolby Atmos conflicted with `vendor.dolby_v3_6.hardware.dms360@2.0-service`, `vendor.dolby_sp.hardware.dmssp@2.0-service`, & `vendor.dolby.hardware.dms@1.0-service`
 
 ## Sources
 - https://dumps.tadiphone.dev/dumps/motorola/eqs user-13-T1SQ33.15-11-137-10-71a49-release-keys
 - /system/vendor/etc/aualgo: https://dumps.tadiphone.dev/dumps/motorola/rtwo user-13-T1TR33.43-20-28-8fa75-release-keys
 - libswvqe.so: LENOVO TB-J606F
 - libstagefrightdolby.so, libstagefright_soft_ddpdec.so, libstagefright_soft_ac4dec.so, libdeccfg.so, & media_codecs_dolby_audio.xml: https://dumps.tadiphone.dev/dumps/motorola/rhode user-12-S1SR32.38-124-3-a8403-release-keys
+- libhidlbase.so: CrDroid ROM Android 13
+- android.hardware.audio.effect@*-impl.so: https://dumps.tadiphone.dev/dumps/oneplus/op594dl1 qssi-user-14-UKQ1.230924.001-1701915639192-release-keys--US
 
 ## Screenshots
 - https://t.me/androidryukimods/1527
@@ -55,6 +57,10 @@
 
 ## Tested on
 - Android 13 CrDroid ROM & AlphaDroid ROM
+- Android 14 LineageOS ROM (Spatial Sound only)
+
+## Known Issue
+- Dolby Atmos is unsupported in some Android 14 ROMs
 
 ## Support & Bug Report
 - https://t.me/androidryukimodsdiscussions/2618
