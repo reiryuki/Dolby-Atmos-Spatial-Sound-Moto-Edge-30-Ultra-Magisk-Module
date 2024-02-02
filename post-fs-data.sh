@@ -211,7 +211,7 @@ done
 }
 
 # mount
-NAMES="libhidlbase.so libfmq.so"
+NAMES="libhidlbase.so libfmq.so libbase.so"
 mount_bind_to_apex
 
 # cleaning

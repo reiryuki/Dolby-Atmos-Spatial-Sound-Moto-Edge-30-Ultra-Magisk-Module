@@ -212,14 +212,20 @@ rm -rf $MODPATH/system_dolby
 # check
 if [ $CODEC == true ]; then
   NAME=vendor.dolby.media.c2@*-service
-  FILE=`find $VENDOR/bin/hw $SYSTEM/bin/hw $ODM/bin/hw\
-         $SYSTEM_EXT/bin/hw $PRODUCT/bin/hw -type f -name\
-         $NAME`
+  NAME2=samsung.software.media.c2@*-service
+  FILE=`find $VENDOR $SYSTEM $ODM $SYSTEM_EXT $PRODUCT\
+         -type f -path *bin/hw/$NAME -o -path *bin/hw/$NAME2`
+  FILE2=`find /vendor /system /odm /system_ext /product\
+          -type f -path *bin/hw/$NAME2`
   if [ "$FILE" ]; then
     ui_print "- Built-in"
     ui_print "$FILE"
     ui_print " is detected"
     CODEC=false
+    ui_print " "
+  elif [ "$FILE2" ]; then
+    ui_print "! Dolby C2 codecs service is conflicted with"
+    ui_print "$FILE2"
     ui_print " "
   fi
 fi
@@ -251,16 +257,6 @@ if [ $CODEC == true ]; then
          $DIR/libcodec2_vndk.so
          $DIR/libstagefright_bufferpool@2.0.1.so"
   file_check_vendor_codec
-  NAME=_ZN7android8hardware7details13errorWriteLogEiPKc
-  DES=libstagefright_bufferpool@2.0.1.so
-  DESFILE=$MODPATH/system_codec/vendor$DIR/$DES
-  if grep -q $NAME $DESFILE; then
-    LIB=libfmq.so
-    LISTS=`strings $DESFILE | grep ^lib | grep .so | sed "s|$DES||g"`
-    FILE=`for LIST in $LISTS; do echo $SYSTEM$DIR/$LIST; done`
-    unset MES
-    check_function_2
-  fi
   NAME=_ZN7android19GraphicBufferSource9configureERKNS_2spINS_16ComponentWrapperEEEiijjj
   NAME2=_ZN7android19GraphicBufferSource9configureERKNS_2spINS_16ComponentWrapperEEEiijjm
   DES=libcodec2_hidl@1.0.so
@@ -294,6 +290,30 @@ fi
 
 # codec
 if [ $CODEC == true ]; then
+  unset MES
+  DIR=/lib64
+  LIB=libfmq.so
+  NAME=_ZN7android8hardware7details13errorWriteLogEiPKc
+  DES=libstagefright_bufferpool@2.0.1.so
+  DESFILE=$MODPATH/system_codec/vendor$DIR/$DES
+  if grep -q $NAME $DESFILE; then
+    LISTS=`strings $DESFILE | grep ^lib | grep .so | sed "s|$DES||g"`
+    FILE=`for LIST in $LISTS; do echo $SYSTEM$DIR/$LIST; done`
+    check_function_2
+  fi
+  LIB=libbase.so
+  NAME=_ZN7android4base15WriteStringToFdERKNSt3__112basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEENS0_11borrowed_fdE
+  DES=libcodec2_hidl@1.0.so
+  DESFILE=$MODPATH/system_codec/vendor$DIR/$DES
+  if grep -q $NAME $DESFILE; then
+    LISTS=`strings $DESFILE | grep .so | sed -e "s|$DES||g"\
+            -e 's|android.hardware.media.c2@1.0.so||g'\
+            -e 's|libcodec2_vndk.so||g' -e 's|libcodec2_hidl_plugin.so||g'\
+            -e 's|libstagefright_bufferpool@2.0.1.so||g'\
+            -e 's|LNrso||g'`
+    FILE=`for LIST in $LISTS; do echo $SYSTEM$DIR/$LIST; done`
+    check_function_2
+  fi
   ui_print "- Using Dolby C2 codecs"
   cp -rf $MODPATH/system_codec/* $MODPATH/system
   sed -i 's|#o||g' $MODPATH/service.sh

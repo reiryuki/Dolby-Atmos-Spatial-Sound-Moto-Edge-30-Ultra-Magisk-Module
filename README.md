@@ -17,7 +17,7 @@
 - /system/vendor/etc/aualgo: https://dumps.tadiphone.dev/dumps/motorola/rtwo user-13-T1TR33.43-20-28-8fa75-release-keys
 - libswvqe.so: LENOVO TB-J606F
 - libstagefrightdolby.so, libstagefright_soft_ddpdec.so, libstagefright_soft_ac4dec.so, libdeccfg.so, & media_codecs_dolby_audio.xml: https://dumps.tadiphone.dev/dumps/motorola/rhode user-12-S1SR32.38-124-3-a8403-release-keys
-- libhidlbase.so: CrDroid ROM Android 13
+- libhidlbase.so & libbase.so: CrDroid ROM Android 13
 - android.hardware.audio.effect@*-impl.so: https://dumps.tadiphone.dev/dumps/oneplus/op594dl1 qssi-user-14-UKQ1.230924.001-1701915639192-release-keys--US
 
 ## Screenshots
