@@ -57,10 +57,7 @@
 
 ## Tested on
 - Android 13 CrDroid ROM & AlphaDroid ROM
-- Android 14 LineageOS ROM (Spatial Sound only)
-
-## Known Issue
-- Dolby Atmos is unsupported in some Android 14 ROMs
+- Android 14 LineageOS ROM
 
 ## Support & Bug Report
 - https://t.me/androidryukimodsdiscussions/2618
@@ -69,6 +66,7 @@
 ## Credits and Contributors
 - https://t.me/viperatmos
 - https://t.me/androidryukimodsdiscussions
+- @HELLBOY017
 - You can contribute ideas about this Magisk Module here: https://t.me/androidappsportdevelopment
 
 ## Sponsors

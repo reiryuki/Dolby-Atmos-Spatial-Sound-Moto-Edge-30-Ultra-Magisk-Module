@@ -1,7 +1,7 @@
 id=DolbyAtmosSpatialSound
 name=Dolby Atmos and Spatial Sound Moto Edge 30 Ultra
-version=v2.0
-versionCode=20
+version=v2.1
+versionCode=21
 author=Rei Ryuki the Fixer
 description=Equalizers global type soundfx ported from Motorola Edge 30 Ultra (eqs). Dolby Atmos for any Android 11 and up architecture 64 bit. Spatial Sound for any Android 8 and up.
 
