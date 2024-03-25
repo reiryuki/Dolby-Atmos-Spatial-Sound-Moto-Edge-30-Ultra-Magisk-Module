@@ -206,7 +206,6 @@ else
   sed -i 's|pm enable|pm disable|g' $MODPATH/service.sh
   ui_print " "
 fi
-rm -rf $MODPATH/system_dolby
 
 # check
 if [ $CODEC == true ]; then
@@ -318,8 +317,6 @@ if [ $CODEC == true ]; then
   sed -i 's|#o||g' $MODPATH/service.sh
   ui_print " "
 fi
-rm -rf $MODPATH/system_codec\
- $MODPATH/system_support
 
 # sepolicy
 FILE=$MODPATH/sepolicy.rule
@@ -368,7 +365,10 @@ if [ "$BOOTMODE" == true ]; then
     fi
   done
 fi
-rm -rf $MODPATH/unused
+rm -rf $MODPATH/system_dolby\
+ $MODPATH/system_codec\
+ $MODPATH/system_support\
+ $MODPATH/unused
 remove_sepolicy_rule
 ui_print " "
 
@@ -388,12 +388,12 @@ for NAME in $NAMES; do
     sh $FILE
     rm -f $FILE
   fi
-  rm -rf /metadata/magisk/$NAME
-  rm -rf /mnt/vendor/persist/magisk/$NAME
-  rm -rf /persist/magisk/$NAME
-  rm -rf /data/unencrypted/magisk/$NAME
-  rm -rf /cache/magisk/$NAME
-  rm -rf /cust/magisk/$NAME
+  rm -rf /metadata/magisk/$NAME\
+   /mnt/vendor/persist/magisk/$NAME\
+   /persist/magisk/$NAME\
+   /data/unencrypted/magisk/$NAME\
+   /cache/magisk/$NAME\
+   /cust/magisk/$NAME
 done
 }
 
@@ -931,6 +931,37 @@ if [ $DOLBY == true ]; then
 fi
 
 # function
+file_check_vendor() {
+for FILE in $FILES; do
+  DES=$VENDOR$FILE
+  DES2=$ODM$FILE
+  if [ -f $DES ] || [ -f $DES2 ]; then
+    ui_print "- Detected $FILE"
+    ui_print " "
+    rm -f $MODPATH/system/vendor$FILE
+  fi
+done
+}
+
+# check
+if [ $DOLBY == true ]; then
+  if [ "$IS64BIT" == true ]; then
+    FILES="/lib64/libdeccfg.so
+           /lib64/libstagefrightdolby.so
+           /lib64/libstagefright_soft_ddpdec.so
+           /lib64/libstagefright_soft_ac4dec.so"
+    file_check_vendor
+  fi
+  if [ "$LIST32BIT" ]; then
+    FILES="/lib/libdeccfg.so
+           /lib/libstagefrightdolby.so
+           /lib/libstagefright_soft_ddpdec.so
+           /lib/libstagefright_soft_ac4dec.so"
+    file_check_vendor
+  fi
+fi
+
+# function
 rename_file() {
 if [ -f $FILE ]; then
   ui_print "- Renaming"
@@ -950,10 +981,32 @@ if grep -q $NAME $FILE; then
   ui_print " "
 fi
 }
-
-# mod
-if [ $DOLBY == true ]\
-&& [ "`grep_prop dolby.mod $OPTIONALS`" == 1 ]; then
+patch_file() {
+NAME=libstagefright_foundation.so
+NAME2=libstagefright_fdtn_dolby.so
+if [ "$IS64BIT" == true ]; then
+  FILE=$MODPATH/system/vendor/lib64/$NAME
+  MODFILE=$MODPATH/system/vendor/lib64/$NAME2
+  rename_file
+fi
+if [ "$LIST32BIT" ]; then
+  FILE=$MODPATH/system/vendor/lib/$NAME
+  MODFILE=$MODPATH/system/vendor/lib/$NAME2
+  rename_file
+fi
+FILE="$MODPATH/system/vendor/lib*/$NAME2
+$MODPATH/system/vendor/lib*/soundfx/libswdap.so
+$MODPATH/system/vendor/lib*/soundfx/libdlbvol.so
+$MODPATH/system/vendor/lib*/libdlbdsservice.so
+$MODPATH/system/vendor/lib*/libdlbpreg.so
+$MODPATH/system/vendor/lib*/libstagefrightdolby.so
+$MODPATH/system/vendor/lib*/libstagefright_soft_ddpdec.so
+$MODPATH/system/vendor/lib*/libstagefright_soft_ac4dec.so
+$MODPATH/system/vendor/lib*/libcodec2_vndk.so
+$MODPATH/system/vendor/lib*/libcodec2_soft_ddpdec.so
+$MODPATH/system/vendor/lib*/libcodec2_soft_ac4dec.so"
+change_name
+if [ "`grep_prop dolby.mod $OPTIONALS`" == 1 ]; then
   NAME=dax-default.xml
   NAME2=dap-default.xml
   FILE=$MODPATH/system/vendor/etc/dolby/$NAME
@@ -1013,36 +1066,11 @@ $MODPATH/system/vendor/bin/hw/vendor.dolby*.hardware.dms*@*-service"
   NAME=d53e26da0253
   change_name
 fi
-
-# function
-file_check_vendor() {
-for FILE in $FILES; do
-  DES=$VENDOR$FILE
-  DES2=$ODM$FILE
-  if [ -f $DES ] || [ -f $DES2 ]; then
-    ui_print "- Detected $FILE"
-    ui_print " "
-    rm -f $MODPATH/system/vendor$FILE
-  fi
-done
 }
 
-# check
+# mod
 if [ $DOLBY == true ]; then
-  if [ "$IS64BIT" == true ]; then
-    FILES="/lib64/libdeccfg.so
-           /lib64/libstagefrightdolby.so
-           /lib64/libstagefright_soft_ddpdec.so
-           /lib64/libstagefright_soft_ac4dec.so"
-    file_check_vendor
-  fi
-  if [ "$LIST32BIT" ]; then
-    FILES="/lib/libdeccfg.so
-           /lib/libstagefrightdolby.so
-           /lib/libstagefright_soft_ddpdec.so
-           /lib/libstagefright_soft_ac4dec.so"
-    file_check_vendor
-  fi
+  patch_file
 fi
 
 # fix sensor

@@ -89,10 +89,11 @@ killall vendor.qti.hardware.vibrator.service\
  android.hardware.lights-service.xiaomi_mithorium\
  vendor.samsung.hardware.light-service\
  vendor.qti.hardware.lights.service\
+ android.hardware.lights-service.qti\
  android.hardware.health-service.qti
 #skillall vendor.qti.hardware.display.allocator-service\
 #s vendor.qti.hardware.display.composer-service\
-#s camerahalserver
+#s camerahalserver qcrilNrd
 #xkillall android.hardware.sensors@1.0-service\
 #x android.hardware.sensors@2.0-service\
 #x android.hardware.sensors@2.0-service-mediatek\
