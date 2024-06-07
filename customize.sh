@@ -960,6 +960,9 @@ done
 
 # check
 if [ $DOLBY == true ]; then
+  FILES="/etc/media_codecs_dolby_audio.xml
+         /etc/media_codecs_c2_dolby_audio.xml"
+  file_check_vendor
   if [ "$IS64BIT" == true ]; then
     FILES="/lib64/libdeccfg.so
            /lib64/libstagefrightdolby.so
