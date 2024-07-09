@@ -166,8 +166,6 @@ if [ -d $MODPATH/system_support/vendor$DIR/hw ]; then
     mv -f $MODPATH/system_support/vendor$DIR/hw $MODPATH/system/vendor$DIR
     [ "$MES" ] && ui_print "$MES"
     ui_print " "
-    FILE=$SYSTEM$DIR/$LIB
-    check_function_2
   fi
 fi
 }
@@ -177,7 +175,6 @@ if [ $DOLBY == true ]; then
   ui_print "- Activating Dolby Atmos..."
   ui_print " "
   NAME=_ZN7android23sp_report_stack_pointerEv
-  LIB=libhidlbase.so
   if [ "$IS64BIT" == true ]; then
     DIR=/lib64
     FILE=$VENDOR$DIR/hw/*audio*.so
@@ -190,6 +187,7 @@ if [ $DOLBY == true ]; then
   fi
   NAME=_ZN7android8hardware23getOrCreateCachedBinderEPNS_4hidl4base4V1_05IBaseE
   DES=vendor.dolby.hardware.dms@2.0.so
+  LIB=libhidlbase.so
   if [ "$IS64BIT" == true ]; then
     DIR=/lib64
     LISTS=`strings $MODPATH/system_dolby/vendor$DIR/$DES | grep ^lib | grep .so`
@@ -1000,6 +998,24 @@ if grep -q $NAME $FILE; then
 fi
 }
 patch_file() {
+NAME=libhidlbase.so
+NAME2=libhidldlbs.so
+if [ "$IS64BIT" == true ]; then
+  FILE=$MODPATH/system/lib64/$NAME
+  MODFILE=$MODPATH/system/vendor/lib64/$NAME2
+  rename_file
+fi
+if [ "$LIST32BIT" ]; then
+  FILE=$MODPATH/system/lib/$NAME
+  MODFILE=$MODPATH/system/vendor/lib/$NAME2
+  rename_file
+fi
+if [ -f $MODPATH/system/vendor/lib64/$NAME2 ]\
+|| [ -f $MODPATH/system/vendor/lib/$NAME2 ]; then
+  FILE="$MODPATH/system/vendor/lib*/$NAME2
+$MODPATH/system/vendor/lib*/vendor.dolby.hardware.dms@2.0.so"
+  change_name
+fi
 NAME=libstagefright_foundation.so
 NAME2=libstagefright_fdtn_dolby.so
 if [ "$IS64BIT" == true ]; then
