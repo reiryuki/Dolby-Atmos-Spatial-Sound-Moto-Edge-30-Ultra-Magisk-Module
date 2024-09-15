@@ -25,8 +25,9 @@
 - https://t.me/androidryukimods/1527
 
 ## Requirements
-- Architecture 64 bit for Dolby Atmos
+- ARM64 architecture for Dolby Atmos
 - Android 11 and up for Dolby Atmos
+- ARM64 or ARM architecture for Spatial Sound
 - Android 8 and up for Spatial Sound
 - Magisk or KernelSU installed (Recommended to use Magisk Delta/Kitsune Mask for systemless early init mount manifest.xml if your ROM is Read-Only https://t.me/androidryukimodsdiscussions/100091)
 - Moto Core Magisk Module installed https://github.com/reiryuki/Moto-Core-Magisk-Module except you are in Motorola ROM
@@ -50,29 +51,27 @@
 - If you have sensors issue (fingerprint, proximity, gyroscope, etc), then READ Optionals bellow!
 
 ## Optionals
-- https://t.me/androidryukimodsdiscussions/2616
+- https://t.me/ryukinotes/8
 - Global: https://t.me/androidryukimodsdiscussions/60861
 - Stream: https://t.me/androidryukimodsdiscussions/26764
 
 ## Troubleshootings
-- https://t.me/androidryukimodsdiscussions/2617
+- https://t.me/ryukinotes/10
+- https://t.me/ryukinotes/11
 - Global: https://t.me/androidryukimodsdiscussions/29836
-
-## Tested on
-- Android 13 CrDroid ROM & AlphaDroid ROM
-- Android 14 LineageOS ROM
 
 ## Support & Bug Report
 - https://t.me/androidryukimodsdiscussions/2618
 - If you don't do above, issues will be closed immediately
 
 ## Credits and Contributors
+- @HuskyDG
 - https://t.me/viperatmos
 - https://t.me/androidryukimodsdiscussions
 - @HELLBOY017
 - You can contribute ideas about this Magisk Module here: https://t.me/androidappsportdevelopment
 
 ## Sponsors
-- https://t.me/androidryukimodsdiscussions/2619
+- https://t.me/ryukinotes/25
 
 
