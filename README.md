@@ -19,15 +19,15 @@
 - libstagefrightdolby.so, libstagefright_soft_ddpdec.so, libstagefright_soft_ac4dec.so, libdeccfg.so, & media_codecs_dolby_audio.xml: https://dumps.tadiphone.dev/dumps/motorola/rhode user-12-S1SR32.38-124-3-a8403-release-keys
 - libhidlbase.so & libbase.so: CrDroid ROM Android 13
 - android.hardware.audio.effect@*-impl.so: https://dumps.tadiphone.dev/dumps/oneplus/op594dl1 qssi-user-14-UKQ1.230924.001-1701915639192-release-keys--US
-- libmagiskpolicy.so: Kitsune Mask R65C33E4F
+- libmagiskpolicy.so: Kitsune Mask R6687BB53
 
 ## Screenshots
 - https://t.me/androidryukimods/1527
 
 ## Requirements
-- ARM64 architecture for Dolby Atmos
+- arm64-v8a architecture for Dolby Atmos
 - Android 11 and up for Dolby Atmos
-- ARM64 or ARM architecture for Spatial Sound
+- arm64-v8a or armeabi-v7a architecture for Spatial Sound
 - Android 8 and up for Spatial Sound
 - Magisk or KernelSU installed (Recommended to use Magisk Delta/Kitsune Mask for systemless early init mount manifest.xml if your ROM is Read-Only https://t.me/androidryukimodsdiscussions/100091)
 - Moto Core Magisk Module installed https://github.com/reiryuki/Moto-Core-Magisk-Module except you are in Motorola ROM
