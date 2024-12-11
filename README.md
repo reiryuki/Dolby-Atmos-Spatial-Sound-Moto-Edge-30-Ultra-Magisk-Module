@@ -15,7 +15,7 @@
 ## Sources
 - https://dumps.tadiphone.dev/dumps/motorola/eqs user-13-T1SQ33.15-11-137-10-71a49-release-keys
 - /system/vendor/etc/aualgo: https://dumps.tadiphone.dev/dumps/motorola/rtwo user-13-T1TR33.43-20-28-8fa75-release-keys
-- libswvqe.so: LENOVO TB-J606F
+- libswvqe.so: LENOVO TB-J606F https://t.me/c/1331480009/94136
 - libstagefrightdolby.so, libstagefright_soft_ddpdec.so, libstagefright_soft_ac4dec.so, libdeccfg.so, & media_codecs_dolby_audio.xml: https://dumps.tadiphone.dev/dumps/motorola/rhode user-12-S1SR32.38-124-3-a8403-release-keys
 - libhidlbase.so & libbase.so: CrDroid ROM Android 13
 - android.hardware.audio.effect@*-impl.so: https://dumps.tadiphone.dev/dumps/oneplus/op594dl1 qssi-user-14-UKQ1.230924.001-1701915639192-release-keys--US
@@ -37,12 +37,12 @@
 
 ## Installation Guide & Download Link
 - Recommended to use Magisk Delta/Kitsune Mask https://t.me/androidryukimodsdiscussions/100091
-- Remove any other else Dolby Magisk module with different name (no need to remove if it's the same name)
+- Remove any other else Dolby MAGISK MODULE with different name (no need to remove if it's the same name)
 - Reboot
 - Install Moto Core Magisk Module first: https://github.com/reiryuki/Moto-Core-Magisk-Module except you are in Motorola ROM
 - If you have Dolby in-built in your ROM, then you need to activate data.cleanup=1 at the first time install (READ Optionals bellow!)
 - Install this module https://www.pling.com/p/2105416/ via Magisk app or KernelSU app or Recovery if Magisk installed
-- Install AML Magisk Module https://t.me/androidryukimodsdiscussions/29836 only if using any other else audio mod module
+- Install AML Magisk Module https://t.me/ryukinotes/34 only if using any other else audio mod module
 - If you are using KernelSU, you need to disable Unmount Modules by Default in KernelSU app settings
 - Reboot
 - If you are using KernelSU, you need to allow superuser list manually all package name listed in package.txt (and your home launcher app also) (enable show system apps) and reboot afterwards
@@ -52,13 +52,13 @@
 
 ## Optionals
 - https://t.me/ryukinotes/8
-- Global: https://t.me/androidryukimodsdiscussions/60861
+- Global: https://t.me/ryukinotes/35
 - Stream: https://t.me/androidryukimodsdiscussions/26764
 
 ## Troubleshootings
 - https://t.me/ryukinotes/10
 - https://t.me/ryukinotes/11
-- Global: https://t.me/androidryukimodsdiscussions/29836
+- Global: https://t.me/ryukinotes/34
 
 ## Support & Bug Report
 - https://t.me/androidryukimodsdiscussions/2618
