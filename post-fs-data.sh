@@ -188,16 +188,8 @@ fi
 # function
 mount_bind_file() {
 for FILE in $FILES; do
-  if echo $FILE | grep libhidlbase.so; then
-    DES=`echo $FILE | sed 's|libhidlbase.so|libutils.so|g'`
-    if grep _ZN7android8String16aSEOS0_ $DES; then
-      umount $FILE
-      mount -o bind $MODFILE $FILE
-    fi
-  else
-    umount $FILE
-    mount -o bind $MODFILE $FILE
-  fi
+  umount $FILE
+  mount -o bind $MODFILE $FILE
 done
 }
 mount_bind_to_apex() {
@@ -216,7 +208,7 @@ done
 }
 
 # mount
-NAMES="libhidlbase.so libfmq.so libbase.so"
+NAMES="libhidlbase.so libfmq.so libbase.so libutils.so"
 mount_bind_to_apex
 
 # cleaning
