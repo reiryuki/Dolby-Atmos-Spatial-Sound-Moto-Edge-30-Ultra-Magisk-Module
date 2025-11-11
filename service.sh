@@ -33,7 +33,8 @@ else
   SERVER=mediaserver
 fi
 killall $SERVER\
- android.hardware.audio@4.0-service-mediatek
+ android.hardware.audio@4.0-service-mediatek\
+ android.hardware.audio.service
 
 # function
 dolby_service() {
@@ -64,8 +65,6 @@ if [ "`realpath $DIR`" == $DIR ]; then
 fi
 # run
 SERVICES=`realpath /vendor`/bin/hw/vendor.dolby.hardware.dms@2.0-service
-#oSERVICES="`realpath /vendor`/bin/hw/vendor.dolby.hardware.dms@2.0-service
-#o          `realpath /vendor`/bin/hw/vendor.dolby.media.c2@1.0-service"
 for SERVICE in $SERVICES; do
   killall $SERVICE
   if ! stat -c %a $SERVICE | grep -E '755|775|777|757'\
@@ -106,17 +105,6 @@ for SERVICE in $SERVICES; do
     PID=`pidof $SERVICE`
   fi
 done
-}
-task_service() {
-sleep 1
-FILE=/dev/cpuset/foreground/tasks
-if [ "$PID" ]; then
-  for pid in $PID; do
-    if ! grep $pid $FILE; then
-      echo $pid > $FILE
-    fi
-  done
-fi
 }
 
 # dolby
@@ -226,10 +214,6 @@ fi
 
 # check
 #dcheck_service
-
-# task
-#oPID=`pidof vendor.dolby.media.c2@1.0-service`
-#otask_service
 
 # function
 stop_log() {

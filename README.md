@@ -31,7 +31,7 @@
 - Android 11 and up for Dolby Atmos
 - arm64-v8a or armeabi-v7a architecture for Spatial Sound
 - Android 8 and up for Spatial Sound
-- Magisk or KernelSU installed (Recommended to use Magisk Delta/Kitsune Mask for systemless early init mount manifest.xml if your ROM is Read-Only https://t.me/ryukinotes/49)
+- Magisk or Kitsune Mask or KernelSU or Apatch installed (Recommended to use Magisk Delta/Kitsune Mask for systemless early init mount manifest.xml if your ROM is Read-Only https://t.me/ryukinotes/49)
 - Moto Core Magisk Module installed https://github.com/reiryuki/Moto-Core-Magisk-Module except you are in Motorola ROM
 
 ## WARNING!!!
@@ -43,7 +43,7 @@
 - Reboot
 - Install Moto Core Magisk Module first: https://github.com/reiryuki/Moto-Core-Magisk-Module except you are in Motorola ROM
 - If you have Dolby in-built in your ROM, then you need to activate data.cleanup=1 at the first time install (READ Optionals bellow!)
-- Install this module https://www.pling.com/p/2105416/ via Magisk app or KernelSU app or Recovery if Magisk installed
+- Install this module https://www.pling.com/p/2105416/ via Magisk app or Kitsune Mask app or KernelSU app or Apatch app or Recovery if Magisk or Kitsune Mask installed
 - Install AML Magisk Module https://t.me/ryukinotes/34 only if using any other else audio mod module
 - If you are using KernelSU, you need to disable Unmount Modules by Default in KernelSU app settings
 - Reboot

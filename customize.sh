@@ -136,12 +136,6 @@ if [ "`grep_prop moto.dolby $OPTIONALS`" == 0 ]; then
 else
   DOLBY=true
 fi
-if [ $DOLBY == true ]\
-&& [ "`grep_prop dolby.codec $OPTIONALS`" == 1 ]; then
-  CODEC=true
-else
-  CODEC=false
-fi
 
 # architecture
 if [ "$ABILIST" ]; then
@@ -158,7 +152,6 @@ if ! echo "$ABILIST" | grep -q $NAME; then
       ui_print " "
     fi
     DOLBY=false
-    CODEC=false
   else
     if [ "$BOOTMODE" == true ]; then
       ui_print "! This ROM doesn't support $NAME nor $NAME2 architecture"
@@ -191,7 +184,6 @@ else
   if [ $DOLBY == true ] && [ "$API" -lt 30 ]; then
     ui_print "  ! Unsupported Dolby Atmos."
     DOLBY=false
-    CODEC=false
   fi
   ui_print " "
 fi
@@ -365,117 +357,6 @@ else
   ui_print " "
 fi
 
-# check
-if [ $CODEC == true ]; then
-  NAME=vendor.dolby.media.c2@*-service
-  NAME2=samsung.software.media.c2@*-service
-  FILE=`find $VENDOR $SYSTEM $ODM $SYSTEM_EXT $PRODUCT\
-         -type f -path *bin/hw/$NAME -o -path *bin/hw/$NAME2`
-  FILE2=`find /vendor /system /odm /system_ext /product\
-          -type f -path *bin/hw/$NAME2`
-  if [ "$FILE" ]; then
-    ui_print "- Built-in"
-    ui_print "$FILE"
-    ui_print " is detected"
-    CODEC=false
-    ui_print " "
-  elif [ "$FILE2" ]; then
-    ui_print "! Dolby C2 codecs service is conflicted with"
-    ui_print "$FILE2"
-    ui_print " "
-  fi
-fi
-
-# function
-file_check_vendor_codec() {
-for FILE in $FILES; do
-  DES=$VENDOR$FILE
-  DES2=$ODM$FILE
-  if [ -f $DES ] || [ -f $DES2 ]; then
-    ui_print "- Detected $FILE"
-    ui_print " "
-    rm -f $MODPATH/system_codec/vendor$FILE
-  fi
-done
-}
-
-# check
-if [ $CODEC == true ]; then
-  DIR=/lib64
-  FILES="$DIR/android.hardware.media.c2@1.0.so
-         $DIR/android.hardware.media.c2@1.1.so
-         $DIR/android.hardware.media.c2@1.2.so
-         $DIR/libcodec2_hidl@1.0.so
-         $DIR/libcodec2_hidl@1.1.so
-         $DIR/libcodec2_hidl@1.2.so
-         $DIR/libcodec2_hidl@1.0.so
-         $DIR/libcodec2_hidl_plugin.so
-         $DIR/libcodec2_vndk.so
-         $DIR/libstagefright_bufferpool@2.0.1.so"
-  file_check_vendor_codec
-  NAME=_ZN7android19GraphicBufferSource9configureERKNS_2spINS_16ComponentWrapperEEEiijjj
-  NAME2=_ZN7android19GraphicBufferSource9configureERKNS_2spINS_16ComponentWrapperEEEiijjm
-  DES=libcodec2_hidl@1.0.so
-  DESFILE=$MODPATH/system_codec/vendor$DIR/$DES
-  if grep -q $NAME $DESFILE; then
-    LISTS=`strings $DESFILE | grep ^lib | grep .so | sed -e "s|$DES||g"\
-            -e 's|libcodec2_vndk.so||g' -e 's|libcodec2_hidl_plugin.so||g'\
-            -e 's|libstagefright_bufferpool@2.0.1.so||g'`
-    FILE=`for LIST in $LISTS; do echo $SYSTEM$DIR/$LIST; done`
-    ui_print "- Checking"
-    ui_print "$NAME"
-    ui_print "  function at"
-    ui_print "$FILE"
-    ui_print "  Please wait..."
-    if ! grep -q $NAME $FILE; then
-      if grep -q $NAME2 $FILE; then
-        ui_print "  Changing function to"
-        ui_print "$NAME2"
-        ui_print "  at"
-        ui_print "$DESFILE"
-        sed -i "s|$NAME|$NAME2|g" $DESFILE
-      else
-        ui_print "  ! Function not found."
-        ui_print "    Unsupported Dolby C2 codecs."
-        CODEC=false
-      fi
-    fi
-    ui_print " "
-  fi
-fi
-
-# codec
-if [ $CODEC == true ]; then
-  unset MES
-  DIR=/lib64
-  LIB=libfmq.so
-  NAME=_ZN7android8hardware7details13errorWriteLogEiPKc
-  DES=libstagefright_bufferpool@2.0.1.so
-  DESFILE=$MODPATH/system_codec/vendor$DIR/$DES
-  if grep -q $NAME $DESFILE; then
-    LISTS=`strings $DESFILE | grep ^lib | grep .so | sed "s|$DES||g"`
-    FILE=`for LIST in $LISTS; do echo $SYSTEM$DIR/$LIST; done`
-    check_function_2
-  fi
-  LIB=libbase.so
-  NAME=_ZN7android4base15WriteStringToFdERKNSt3__112basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEENS0_11borrowed_fdE
-  DES=libcodec2_hidl@1.0.so
-  DESFILE=$MODPATH/system_codec/vendor$DIR/$DES
-  if grep -q $NAME $DESFILE; then
-    LISTS=`strings $DESFILE | grep .so | sed -e "s|$DES||g"\
-            -e 's|android.hardware.media.c2@1.0.so||g'\
-            -e 's|libcodec2_vndk.so||g' -e 's|libcodec2_hidl_plugin.so||g'\
-            -e 's|libstagefright_bufferpool@2.0.1.so||g'\
-            -e 's|LNrso||g'`
-    FILE=`for LIST in $LISTS; do echo $SYSTEM$DIR/$LIST; done`
-    check_function_2
-  fi
-  ui_print "- Using Dolby C2 codecs"
-  cp -rf $MODPATH/system_codec/* $MODPATH/system
-  sed -i 's|#o||g' $MODPATH/service.sh
-  ui_print " "
-fi
-
 # sepolicy
 FILE=$MODPATH/sepolicy.rule
 DES=$MODPATH/sepolicy.pfsd
@@ -524,7 +405,6 @@ if [ "$BOOTMODE" == true ]; then
   done
 fi
 rm -rf $MODPATH/system_dolby\
- $MODPATH/system_codec\
  $MODPATH/system_support\
  $MODPATH/unused
 remove_sepolicy_rule
@@ -1163,8 +1043,7 @@ if [ $DOLBY == true ]; then
            /lib/libstagefright_soft_ac4dec.so"
     file_check_vendor
   fi
-  FILES="/etc/media_codecs_dolby_audio.xml
-         /etc/media_codecs_c2_dolby_audio.xml"
+  FILES=/etc/media_codecs_dolby_audio.xml
   file_check_vendor
 fi
 
@@ -1263,10 +1142,7 @@ $MODPATH/system/vendor/lib*/libdlbdsservice*.so
 $MODPATH/system/vendor/lib*/libdlbpreg*.so
 $MODPATH/system/vendor/lib*/libstagefrightdolby.so
 $MODPATH/system/vendor/lib*/libstagefright_soft_ddpdec*.so
-$MODPATH/system/vendor/lib*/libstagefright_soft_ac4dec*.so
-$MODPATH/system/vendor/lib*/libcodec2_vndk.so
-$MODPATH/system/vendor/lib*/libcodec2_soft_ddpdec.so
-$MODPATH/system/vendor/lib*/libcodec2_soft_ac4dec.so"
+$MODPATH/system/vendor/lib*/libstagefright_soft_ac4dec*.so"
 change_name
 if [ "`grep_prop dolby.mod $OPTIONALS`" == 1 ]; then
   NAME=dax-default.xml
@@ -1347,9 +1223,7 @@ $MODPATH/system/vendor/lib*/vendor.dolby*.hardware.dms*@*-impl.so
 $MODPATH/system/vendor/bin/hw/vendor.dolby*.hardware.dms*@*-service
 $MODPATH/system/vendor/lib*/libdeccfg*.so
 $MODPATH/system/vendor/lib*/libstagefright_soft_ddpdec*.so
-$MODPATH/system/vendor/lib*/libstagefright_soft_ac4dec*.so
-$MODPATH/system/vendor/lib*/libcodec2_soft_ddpdec.so
-$MODPATH/system/vendor/lib*/libcodec2_soft_ac4dec.so"
+$MODPATH/system/vendor/lib*/libstagefright_soft_ac4dec*.so"
   change_name
   NAME=vendor.dolby.hardware.dms@2.0-impl.so
   NAME2=vendor.dlbds.hardware.dms@2.0-impl.so

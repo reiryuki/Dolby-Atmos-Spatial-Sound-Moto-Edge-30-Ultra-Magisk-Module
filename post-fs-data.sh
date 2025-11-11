@@ -95,11 +95,15 @@ if [ -L $MODPATH/system/vendor ]\
     chmod 0755 $FILE
     chown 0.2000 $FILE
   done
+  FILES=`find $MODPATH/vendor/lib* -type f`
+  for FILE in $FILES; do
+    chmod 0644 $FILE
+    chown 0.0 $FILE
+  done
   chcon -R u:object_r:vendor_file:s0 $MODPATH/vendor
   chcon -R u:object_r:vendor_configs_file:s0 $MODPATH/vendor/etc
   chcon -R u:object_r:vendor_configs_file:s0 $MODPATH/vendor/odm/etc
   chcon u:object_r:vendor_hal_file:s0 $MODPATH/vendor/lib*/hw
-  chcon u:object_r:mediacodec_exec:s0 $MODPATH/vendor/bin/hw/vendor.dolby.media.c2@*-service
 #  chcon u:object_r:hal_dms_default_exec:s0 $MODPATH/vendor/bin/hw/vendor.dolby*.hardware.dms*@*-service
 #  chcon u:object_r:hal_dms_default_exec:s0 $MODPATH/vendor/odm/bin/hw/vendor.dolby*.hardware.dms*@*-service
 else
@@ -113,11 +117,15 @@ else
     chmod 0755 $FILE
     chown 0.2000 $FILE
   done
+  FILES=`find $MODPATH/system/vendor/lib* -type f`
+  for FILE in $FILES; do
+    chmod 0644 $FILE
+    chown 0.0 $FILE
+  done
   chcon -R u:object_r:vendor_file:s0 $MODPATH/system/vendor
   chcon -R u:object_r:vendor_configs_file:s0 $MODPATH/system/vendor/etc
   chcon -R u:object_r:vendor_configs_file:s0 $MODPATH/system/vendor/odm/etc
   chcon u:object_r:vendor_hal_file:s0 $MODPATH/system/vendor/lib*/hw
-  chcon u:object_r:mediacodec_exec:s0 $MODPATH/system/vendor/bin/hw/vendor.dolby.media.c2@*-service
 #  chcon u:object_r:hal_dms_default_exec:s0 $MODPATH/system/vendor/bin/hw/vendor.dolby*.hardware.dms*@*-service
 #  chcon u:object_r:hal_dms_default_exec:s0 $MODPATH/system/vendor/odm/bin/hw/vendor.dolby*.hardware.dms*@*-service
 fi
@@ -208,7 +216,7 @@ done
 }
 
 # mount
-NAMES="libhidlbase.so libfmq.so libbase.so libutils.so"
+NAMES="libhidlbase.so libutils.so"
 mount_bind_to_apex
 
 # cleaning
