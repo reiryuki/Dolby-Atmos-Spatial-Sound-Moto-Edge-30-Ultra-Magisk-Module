@@ -15,7 +15,7 @@
 ## Sources
 - https://dumps.tadiphone.dev/dumps/motorola/eqs user-13-T1SQ33.15-11-137-10-71a49-release-keys
 - libsqlite.so: https://dumps.tadiphone.dev/dumps/zte/p855a01 msmnile-user-11-RKQ1.201221.002-20211215.223102-release-keys
-- /system/vendor/etc/aualgo: https://dumps.tadiphone.dev/dumps/motorola/rtwo user-13-T1TR33.43-20-28-8fa75-release-keys
+- /system/vendor: https://dumps.tadiphone.dev/dumps/motorola/cancunf user-15-V1TD35H.83-20-5-c7172e-release-keys
 - libswvqe.so: LENOVO TB-J606F https://t.me/c/1331480009/94136
 - libstagefrightdolby.so, libstagefright_soft_ddpdec.so, libstagefright_soft_ac4dec.so, libdeccfg.so, & media_codecs_dolby_audio.xml: https://dumps.tadiphone.dev/dumps/motorola/rhode user-12-S1SR32.38-124-3-a8403-release-keys
 - libhidlbase.so & libbase.so: CrDroid ROM Android 13
