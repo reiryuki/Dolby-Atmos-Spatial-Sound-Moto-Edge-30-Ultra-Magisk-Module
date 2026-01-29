@@ -31,6 +31,7 @@
 - Android 11 and up for Dolby Atmos
 - arm64-v8a or armeabi-v7a architecture for Spatial Sound
 - Android 8 and up for Spatial Sound
+- HIDL audio service
 - Magisk or Kitsune Mask or KernelSU or Apatch installed (Recommended to use Magisk Delta/Kitsune Mask for systemless early init mount manifest.xml if your ROM is Read-Only https://t.me/ryukinotes/49)
 - Moto Core Magisk Module installed https://github.com/reiryuki/Moto-Core-Magisk-Module except you are in Motorola ROM
 
