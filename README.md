@@ -9,7 +9,6 @@
 - Dolby Atmos and Spatial Sound
 - Global type sound effect
 - Dolby Atmos changes/spoofs ro.product.brand to motorola which may break some system apps and features functionality
-- Dolby Atmos doesn't support auxiliary cable
 - Dolby Atmos conflicted with `vendor.dolby_v3_6.hardware.dms360@2.0-service`, `vendor.dolby_sp.hardware.dmssp@2.0-service`, & `vendor.dolby.hardware.dms@1.0-service`
 
 ## Sources
@@ -21,10 +20,55 @@
 - libhidlbase.so & libbase.so: CrDroid ROM Android 13
 - libutils.so: LineageOS 23 Android 16 BP2A.250605.031.A2 1758630651
 - android.hardware.audio.effect@*-impl.so: https://dumps.tadiphone.dev/dumps/oneplus/op594dl1 qssi-user-14-UKQ1.230924.001-1701915639192-release-keys--US
-- libmagiskpolicy.so: Kitsune Mask R6687BB53
+- libmagiskpolicy.so: Magisk (stable) 30.7 (30700)
+
+## Changelog
+
+v3.9
+- Does not disable raw playback (You can use Audio Compatibility Patch Reborn Magisk Module instead)
+- Magisk (stable) 30.7 (30700)
+
+v3.8
+- Fix wrong target in latest KernelSU
+- Improve detections
+
+v3.7
+- Update Spatial Sound libraries from https://dumps.tadiphone.dev/dumps/motorola/cancunf user-15-V1TD35H.83-20-5-c7172e-release-keys
+- Fix wrong manifest.xml location patch target in latest Magisk version
+
+v3.6
+- Remove useless c2 codec service
+- Tidy up aml.sh
+- Exclude \*audio\*effects\*haptic\*.xml
+- Fix wrong file permissions in some ROMs
+
+v3.5
+- Fix ZN7android8String16aSEOS0 function not found in some ROMs
+- Add libutils.so as system_support
+- Abort installation if fail to mount mirror system
+
+v3.4
+- Fix isAtLeast methods
+- Fake Kitsune Mask detection
+- Improve /odm and /my_product support detection
+
+v3.3
+- Fix script bug at installation for libsqlite.so detections
+- Fix selinux denials
+
+v3.2
+- Modifies all blobs (if dolby.mod=1) to fix conflict with in-built Dolby
+
+v3.1
+- Fix BLUETOOTH_PRIVILEGED permission
+
+v3.0
+- Add Action button to clear apps caches
+- Fix architecture detection in some weird ROMs
+- Fix bug in uninstall.sh
 
 ## Screenshots
-- https://t.me/androidryukimods/1527
+https://t.me/androidryukimods/1527
 
 ## Requirements
 - arm64-v8a architecture for Dolby Atmos
@@ -36,16 +80,16 @@
 - Moto Core Magisk Module installed https://github.com/reiryuki/Moto-Core-Magisk-Module except you are in Motorola ROM
 
 ## WARNING!!!
-- Possibility of bootloop or even softbrick or a service failure on Read-Only ROM if you don't use Magisk Delta/Kitsune Mask.
+Possibility of bootloop or even softbrick or a service failure on Read-Only ROM if you don't use Magisk Delta/Kitsune Mask.
 
 ## Installation Guide & Download Link
 - Recommended to use Magisk Delta/Kitsune Mask https://t.me/ryukinotes/49
 - Remove any other else Dolby MAGISK MODULE with different name (no need to remove if it's the same name)
 - Reboot
-- If you are using KernelSU, you need to disable Unmount Modules by Default in KernelSU app settings and install https://github.com/KernelSU-Modules-Repo/meta-overlayfs first
+- If you are using KernelSU, you need to disable Unmount Modules by Default in KernelSU app settings and install https://github.com/KernelSU-Modules-Repo/meta-overlayfs or https://github.com/KernelSU-Modules-Repo/magic_mount_rs or https://github.com/KernelSU-Modules-Repo/hybrid_mount first depending on ROM compatibility
 - Install Moto Core Magisk Module first: https://github.com/reiryuki/Moto-Core-Magisk-Module except you are in Motorola ROM
 - If you have Dolby in-built in your ROM, then you need to activate data.cleanup=1 at the first time install (READ Optionals bellow!)
-- Install this module https://www.pling.com/p/2105416/ via Magisk app or Kitsune Mask app or KernelSU app or Apatch app or Recovery if Magisk or Kitsune Mask installed
+- Install this module via Magisk app or Kitsune Mask app or KernelSU app or Apatch app or Recovery if Magisk or Kitsune Mask installed
 - Install AML Magisk Module https://t.me/ryukinotes/34 only if using any other else audio mod module
 - Reboot
 - If you are using KernelSU, you need to allow superuser list manually all package name listed in package.txt (and your home launcher app also) (enable show system apps) and reboot afterwards
@@ -75,6 +119,6 @@
 - You can contribute ideas about this Magisk Module here: https://t.me/androidappsportdevelopment
 
 ## Sponsors
-- https://t.me/ryukinotes/25
+https://t.me/ryukinotes/25
 
 
