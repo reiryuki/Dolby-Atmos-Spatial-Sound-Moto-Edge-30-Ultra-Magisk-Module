@@ -819,7 +819,7 @@ APPS="$APPS MusicFX MotoDolbyV3"
 hide_app
 if [ $DOLBY == true ]; then
   APPS="DaxUI OPSoundTuner DolbyAtmos AudioEffectCenter
-        DolbySound"
+        DolbySound LunarisDolby"
   hide_app
 fi
 
