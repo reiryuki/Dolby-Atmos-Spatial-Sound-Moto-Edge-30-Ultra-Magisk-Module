@@ -24,16 +24,23 @@
 
 ## Changelog
 
+v4.2
+- Dolby Atmos:
+  - Fix manifest.xml detection bug in some ROMs
+  - Fix sepolicy denial
+
 v4.1
-- Check functions in mirror /apex files instead of mirror /system if exist
-- Remove hardware services conflict restart (Use this instead: https://github.com/reiryuki/Hardware-Services-Restarter-Magisk-Module)
-- Fix sepolicy denial
+- Dolby Atmos:
+  - Check functions in mirror /apex files instead of mirror /system if exist
+  - Remove hardware services conflict restart (Use this instead: https://github.com/reiryuki/Hardware-Services-Restarter-Magisk-Module)
+  - Fix sepolicy denial
 
 v4.0
 - Support NoMount metamodule
 - Resets module folders/files permissions at post-fs-data
 - Move _uninstall.log to /data/adb/logs/
-- Hides LunarisDolby.apk
+- Dolby Atmos:
+  - Hides in-bulit LunarisDolby.apk
 - Removes conflicted weird modules
 
 v3.9
@@ -46,30 +53,32 @@ v3.8
 
 v3.7
 - Update Spatial Sound libraries from https://dumps.tadiphone.dev/dumps/motorola/cancunf user-15-V1TD35H.83-20-5-c7172e-release-keys
-- Fix wrong manifest.xml location patch target in latest Magisk version
+- Dolby Atmos:
+  - Fix wrong manifest.xml location patch target in latest Magisk version
 
 v3.6
-- Remove useless c2 codec service
+- Dolby Atmos:
+  - Remove useless c2 codec service
 - Tidy up aml.sh
 - Exclude \*audio\*effects\*haptic\*.xml
 - Fix wrong file permissions in some ROMs
 
 v3.5
-- Fix ZN7android8String16aSEOS0 function not found in some ROMs
-- Add libutils.so as system_support
+- Dolby Atmos:
+  - Fix ZN7android8String16aSEOS0 function not found in some ROMs
+  - Add libutils.so as system_support
 - Abort installation if fail to mount mirror system
 
 v3.4
 - Fix isAtLeast methods
-- Fake Kitsune Mask detection
+- Dolby Atmos:
+  - Fake Kitsune Mask detection
 - Improve /odm and /my_product support detection
 
 v3.3
-- Fix script bug at installation for libsqlite.so detections
+- Dolby Atmos:
+  - Fix script bug at installation for libsqlite.so detections
 - Fix selinux denials
-
-v3.2
-- Modifies all blobs (if dolby.mod=1) to fix conflict with in-built Dolby
 
 ## Screenshots
 https://t.me/androidryukimods/1527
@@ -93,7 +102,7 @@ Possibility of bootloop or even softbrick or a service failure on Read-Only ROM 
 - If you are using KernelSU, you need to disable Unmount Modules by Default in KernelSU app settings and install https://github.com/KernelSU-Modules-Repo/meta-overlayfs or https://github.com/KernelSU-Modules-Repo/magic_mount_rs or https://github.com/KernelSU-Modules-Repo/hybrid_mount or https://github.com/maxsteeel/nomount first depending on ROM compatibility
 - Install Moto Core Magisk Module first: https://github.com/reiryuki/Moto-Core-Magisk-Module except you are in Motorola ROM
 - If you have Dolby in-built in your ROM, then you need to activate data.cleanup=1 at the first time install (READ Optionals bellow!)
-- Install this module https://devuploads.com/hyrsuadd2qab via Magisk app or Kitsune Mask app or KernelSU app or Apatch app or Recovery if Magisk or Kitsune Mask installed
+- Install this module https://github.com/reiryuki/Dolby-Atmos-Spatial-Sound-Moto-Edge-30-Ultra-Magisk-Module via Magisk app or Kitsune Mask app or KernelSU app or Apatch app or Recovery if Magisk or Kitsune Mask installed
 - Install AML Magisk Module https://t.me/ryukinotes/34 only if using any other else audio mod module
 - Reboot
 - If you are using KernelSU, you need to allow superuser list manually all package name listed in package.txt (and your home launcher app also) (enable show system apps) and reboot afterwards
