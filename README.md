@@ -39,9 +39,9 @@
 
 ## Download Links and Changelog
 
-v4.3 Original UI https://github.com/reiryuki/Dolby-Atmos-Spatial-Sound-Moto-Edge-30-Ultra-Magisk-Module
+v4.3 Original UI https://move2link.co/d0c70fd
 
-v4.3 Lunaris UI https://github.com/reiryuki/Dolby-Atmos-Spatial-Sound-Moto-Edge-30-Ultra-Magisk-Module
+v4.3 Lunaris UI https://move2link.co/a9cd285
 
 - MotoDolbyDax3.apk: Fix Spatial Sound post process mode: Bypass release method if using stream.mode=m optional
 - Update libmagiskpolicy.so from Magisk (debug) 31.0 (31000)
