@@ -368,6 +368,7 @@ fi
 dvl() {
 LIB=libdlbvol.so
 LIBNAME=dvl
+LIBNAME=dvl_mod
 NAME=dlb_music_listener
 NAME=dvl_music
 UUID=40f66c8b-5aa5-4345-8919-53ec431aaa98
@@ -474,12 +475,6 @@ fi
 #dgamedap
 #ddvl
 moto_sst
-
-
-
-
-
-
 
 
 

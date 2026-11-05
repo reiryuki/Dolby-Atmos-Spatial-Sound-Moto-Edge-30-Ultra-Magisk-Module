@@ -25,9 +25,3 @@ remove_sepolicy_rule
 #dresetprop -p --delete persist.vendor.audio_fx.current
 
 
-
-
-
-
-
-

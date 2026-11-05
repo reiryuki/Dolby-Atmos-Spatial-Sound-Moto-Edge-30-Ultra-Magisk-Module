@@ -5,10 +5,8 @@
 - The MIT license specified here is for the Magisk Module only, not for Motorola & Dolby apps and blobs.
 
 ## Descriptions
-- Equalizers sound effect ported from Motorola Edge 30 Ultra (eqs) and integrated as a Magisk Module for all supported and rooted devices with Magisk
+- Equalizers global type sound effect ported from Motorola Edge 30 Ultra (eqs) and integrated as a Magisk Module for all supported and rooted devices with Magisk
 - Dolby Atmos and Spatial Sound
-- Global type sound effect
-- Dolby Atmos changes/spoofs ro.product.brand to motorola which may break some system apps and features functionality
 - Dolby Atmos conflicted with `vendor.dolby_v3_6.hardware.dms360@2.0-service`, `vendor.dolby_sp.hardware.dmssp@2.0-service`, & `vendor.dolby.hardware.dms@1.0-service`
 
 ## Sources
@@ -20,11 +18,36 @@
 - libhidlbase.so & libbase.so: CrDroid ROM Android 13
 - libutils.so: LineageOS 23 Android 16 BP2A.250605.031.A2 1758630651
 - android.hardware.audio.effect@*-impl.so: https://dumps.tadiphone.dev/dumps/oneplus/op594dl1 qssi-user-14-UKQ1.230924.001-1701915639192-release-keys--US
-- libmagiskpolicy.so: Magisk (stable) 30.7 (30700)
+- libswdap.so modified by @ShadoV90
+- LunarisDolby.apk from @Bobbyishere7
+- libmagiskpolicy.so: Magisk (debug) 31.0 (31000)
 
-## Changelog
+## Screenshots
+- Original UI: https://t.me/androidryukimods/1527
+- Lunaris UI: https://t.me/ryukimodsscreenshots/141
 
-v4.2
+## Requirements
+- arm64-v8a architecture for Dolby Atmos
+- Android 11 and up for Dolby Atmos
+- arm64-v8a or armeabi-v7a architecture for Spatial Sound
+- Android 8 and up for Spatial Sound in Original UI
+- Android 8.1 and up for Spatial Sound in Lunaris UI
+- HIDL audio service
+- Magisk or Kitsune Mask or KernelSU or Apatch installed (Recommended to use Magisk Delta/Kitsune Mask for systemless early init mount manifest.xml if your ROM is Read-Only https://t.me/ryukinotes/49)
+- For original UI variant, Moto Core Magisk Module is required https://github.com/reiryuki/Moto-Core-Magisk-Module except you are in Motorola ROM
+- For Lunaris UI variant, Moto Core Magisk Module is not required
+
+## Download Links and Changelog
+
+v4.3 Original UI https://github.com/reiryuki/Dolby-Atmos-Spatial-Sound-Moto-Edge-30-Ultra-Magisk-Module
+v4.3 Lunaris UI https://github.com/reiryuki/Dolby-Atmos-Spatial-Sound-Moto-Edge-30-Ultra-Magisk-Module
+- MotoDolbyDax3.apk: Fix Spatial Sound post process mode: Bypass release method if using stream.mode=m optional
+- Update libmagiskpolicy.so from Magisk (debug) 31.0 (31000)
+- Prepare /storage/emulated/"$UID"/Android/data/$PKG/ directories
+- Add Lunaris UI variant
+- No longer changes/spoofs ro.product.brand to motorola
+
+v4.2 https://move2link.co/3f97783
 - Dolby Atmos:
   - Fix manifest.xml detection bug in some ROMs
   - Fix sepolicy denial
@@ -75,43 +98,26 @@ v3.4
   - Fake Kitsune Mask detection
 - Improve /odm and /my_product support detection
 
-v3.3
-- Dolby Atmos:
-  - Fix script bug at installation for libsqlite.so detections
-- Fix selinux denials
-
-## Screenshots
-https://t.me/androidryukimods/1527
-
-## Requirements
-- arm64-v8a architecture for Dolby Atmos
-- Android 11 and up for Dolby Atmos
-- arm64-v8a or armeabi-v7a architecture for Spatial Sound
-- Android 8 and up for Spatial Sound
-- HIDL audio service
-- Magisk or Kitsune Mask or KernelSU or Apatch installed (Recommended to use Magisk Delta/Kitsune Mask for systemless early init mount manifest.xml if your ROM is Read-Only https://t.me/ryukinotes/49)
-- Moto Core Magisk Module installed https://github.com/reiryuki/Moto-Core-Magisk-Module except you are in Motorola ROM
+## Download Tutorial
+https://t.me/ryukinotes/97
 
 ## WARNING!!!
 Possibility of bootloop or even softbrick or a service failure on Read-Only ROM if you don't use Magisk Delta/Kitsune Mask.
 
-## Installation Guide & Download Link
+## Installation Guide
 - Recommended to use Magisk Delta/Kitsune Mask https://t.me/ryukinotes/49
 - Remove any other else Dolby MAGISK MODULE with different name (no need to remove if it's the same name)
 - Reboot
 - If you are using KernelSU, you need to disable Unmount Modules by Default in KernelSU app settings and install https://github.com/KernelSU-Modules-Repo/meta-overlayfs or https://github.com/KernelSU-Modules-Repo/magic_mount_rs or https://github.com/KernelSU-Modules-Repo/hybrid_mount or https://github.com/maxsteeel/nomount first depending on ROM compatibility
-- Install Moto Core Magisk Module first: https://github.com/reiryuki/Moto-Core-Magisk-Module except you are in Motorola ROM
+- Install Moto Core Magisk Module first if using the original UI variant: https://github.com/reiryuki/Moto-Core-Magisk-Module except you are in Motorola ROM
 - If you have Dolby in-built in your ROM, then you need to activate data.cleanup=1 at the first time install (READ Optionals bellow!)
-- Install this module https://move2link.co/3f97783 via Magisk app or Kitsune Mask app or KernelSU app or Apatch app or Recovery if Magisk or Kitsune Mask installed
+- Install this module via Magisk app or Kitsune Mask app or KernelSU app or Apatch app or Recovery if Magisk or Kitsune Mask installed
 - Install AML Magisk Module https://t.me/ryukinotes/34 only if using any other else audio mod module
 - Reboot
 - If you are using KernelSU, you need to allow superuser list manually all package name listed in package.txt (and your home launcher app also) (enable show system apps) and reboot afterwards
 - If you are using SUList, you need to allow list manually your home launcher app (enable show system apps) and reboot afterwards
 - If options doesn't show up in Bluetooth audio, try disconnect and reconnect the Bluetooth and restart the app
 - If you have vibrator, camera, charging/USB, SIM card/RIL, display, brightness, WiFi, thermal, and sensors issues (fingerprint, proximity, gyroscope, etc.), then install https://github.com/reiryuki/Hardware-Services-Restarter-Magisk-Module also
-
-## Download Tutorial
-https://t.me/ryukinotes/97
 
 ## Optionals
 - https://t.me/ryukinotes/8
@@ -123,18 +129,20 @@ https://t.me/ryukinotes/97
 - https://t.me/ryukinotes/11
 - Global: https://t.me/ryukinotes/34
 
-## Support & Bug Report
+## Support and Bug Report
 - https://t.me/ryukinotes/54
 - If you don't do above, issues will be closed immediately
 
 ## Credits and Contributors
 - @HuskyDG
+- @HELLBOY017
+- @ShadoV90
+- @Bobbyishere7
 - https://t.me/viperatmos
 - https://t.me/androidryukimodsdiscussions
-- @HELLBOY017
 - https://t.me/androidappsportdevelopment
 
-## Sponsors
+## Sponsors and Donation
 https://t.me/ryukinotes/25
 
 

@@ -41,7 +41,6 @@ fi
 
 # function
 dolby_prop() {
-resetprop -n ro.product.brand motorola
 resetprop -p --delete persist.vendor.audio_fx.current
 resetprop -n persist.vendor.audio_fx.current dolby
 resetprop -n ro.vendor.dolby.dax.version DAX3_3.8.5.20_r1
@@ -202,12 +201,6 @@ PROC=`cat $MODPATH/package.txt`
 #dPROC=`cat $MODPATH/package-dolby.txt`
 killall $PROC
 check_audioserver
-
-
-
-
-
-
 
 
 
