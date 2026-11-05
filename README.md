@@ -4,7 +4,7 @@
 - Motorola & Dolby apps and blobs are owned by Motorola™ & Dolby™.
 - The MIT license specified here is for the Magisk Module only, not for Motorola & Dolby apps and blobs.
 
-## Descriptions
+## Description
 - Equalizers global type sound effect ported from Motorola Edge 30 Ultra (eqs) and integrated as a Magisk Module for all supported and rooted devices with Magisk
 - Dolby Atmos and Spatial Sound
 - Dolby Atmos conflicted with `vendor.dolby_v3_6.hardware.dms360@2.0-service`, `vendor.dolby_sp.hardware.dmssp@2.0-service`, & `vendor.dolby.hardware.dms@1.0-service`
@@ -40,7 +40,9 @@
 ## Download Links and Changelog
 
 v4.3 Original UI https://github.com/reiryuki/Dolby-Atmos-Spatial-Sound-Moto-Edge-30-Ultra-Magisk-Module
+
 v4.3 Lunaris UI https://github.com/reiryuki/Dolby-Atmos-Spatial-Sound-Moto-Edge-30-Ultra-Magisk-Module
+
 - MotoDolbyDax3.apk: Fix Spatial Sound post process mode: Bypass release method if using stream.mode=m optional
 - Update libmagiskpolicy.so from Magisk (debug) 31.0 (31000)
 - Prepare /storage/emulated/"$UID"/Android/data/$PKG/ directories
