@@ -19,7 +19,7 @@
 - libutils.so: LineageOS 23 Android 16 BP2A.250605.031.A2 1758630651
 - android.hardware.audio.effect@*-impl.so: https://dumps.tadiphone.dev/dumps/oneplus/op594dl1 qssi-user-14-UKQ1.230924.001-1701915639192-release-keys--US
 - libswdap.so modified by @ShadoV90
-- LunarisDolby.apk from @Bobbyishere7
+- LunarisDolby.apk by @Bobbyishere7
 - libmagiskpolicy.so: Magisk (debug) 31.0 (31000)
 
 ## Screenshots
@@ -38,6 +38,16 @@
 - For Lunaris UI variant, Moto Core Magisk Module is not required
 
 ## Download Links and Changelog
+
+v4.4 Original UI https://github.com/reiryuki/Dolby-Atmos-Spatial-Sound-Moto-Edge-30-Ultra-Magisk-Module
+
+v4.4 Lunaris UI https://github.com/reiryuki/Dolby-Atmos-Spatial-Sound-Moto-Edge-30-Ultra-Magisk-Module
+
+- Add a new optional dolby.mod_xml to let users to use any modified/custom dax-default.xml. Please read Optionals below.
+- LunarisDolby.apk:
+  - Does not hide Spatial Audio if Dolby Atmos toggle is off
+  - Fix wrong music_stream parameters
+  - Fix permission
 
 v4.3 Original UI https://move2link.co/d0c70fd
 
@@ -93,12 +103,6 @@ v3.5
   - Fix ZN7android8String16aSEOS0 function not found in some ROMs
   - Add libutils.so as system_support
 - Abort installation if fail to mount mirror system
-
-v3.4
-- Fix isAtLeast methods
-- Dolby Atmos:
-  - Fake Kitsune Mask detection
-- Improve /odm and /my_product support detection
 
 ## Download Tutorial
 https://t.me/ryukinotes/97
