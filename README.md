@@ -39,9 +39,9 @@
 
 ## Download Links and Changelog
 
-v4.4 Original UI https://github.com/reiryuki/Dolby-Atmos-Spatial-Sound-Moto-Edge-30-Ultra-Magisk-Module
+v4.4 Original UI https://move2link.co/3ebab52
 
-v4.4 Lunaris UI https://github.com/reiryuki/Dolby-Atmos-Spatial-Sound-Moto-Edge-30-Ultra-Magisk-Module
+v4.4 Lunaris UI https://move2link.co/2bd652d
 
 - Add a new optional dolby.mod_xml to let users to use any modified/custom dax-default.xml. Please read Optionals below.
 - LunarisDolby.apk:
