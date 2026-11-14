@@ -39,9 +39,9 @@
 
 ## Download Links and Changelog
 
-v4.5 Original UI https://github.com/reiryuki/Dolby-Atmos-Spatial-Sound-Moto-Edge-30-Ultra-Magisk-Module
+v4.5 Original UI https://move2link.co/ba03c12
 
-v4.5 Lunaris UI https://github.com/reiryuki/Dolby-Atmos-Spatial-Sound-Moto-Edge-30-Ultra-Magisk-Module
+v4.5 Lunaris UI https://move2link.co/48d0c02
 
 - Add a new optional dolby.bass_freq to change bass-enhancer-cutoff-frequency values. Please read Optionals below.
 - LunarisDolby.apk: Fix Bass/Middle/Treble enhancer conflict with GEQ
