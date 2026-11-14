@@ -5,7 +5,7 @@
 - The MIT license specified here is for the Magisk Module only, not for Motorola & Dolby apps and blobs.
 
 ## Description
-- Equalizers global type sound effect ported from Motorola Edge 30 Ultra (eqs) and integrated as a Magisk Module for all supported and rooted devices with Magisk
+- Equalizers global type sound effects ported from Motorola Edge 30 Ultra (eqs) and integrated as a Magisk Module for all supported and rooted devices with Magisk
 - Dolby Atmos and Spatial Sound
 - Dolby Atmos conflicted with `vendor.dolby_v3_6.hardware.dms360@2.0-service`, `vendor.dolby_sp.hardware.dmssp@2.0-service`, & `vendor.dolby.hardware.dms@1.0-service`
 
@@ -38,6 +38,13 @@
 - For Lunaris UI variant, Moto Core Magisk Module is not required
 
 ## Download Links and Changelog
+
+v4.5 Original UI https://github.com/reiryuki/Dolby-Atmos-Spatial-Sound-Moto-Edge-30-Ultra-Magisk-Module
+
+v4.5 Lunaris UI https://github.com/reiryuki/Dolby-Atmos-Spatial-Sound-Moto-Edge-30-Ultra-Magisk-Module
+
+- Add a new optional dolby.bass_freq to change bass-enhancer-cutoff-frequency values. Please read Optionals below.
+- LunarisDolby.apk: Fix Bass/Middle/Treble enhancer conflict with GEQ
 
 v4.4 Original UI https://move2link.co/3ebab52
 
@@ -74,8 +81,7 @@ v4.0
 - Support NoMount metamodule
 - Resets module folders/files permissions at post-fs-data
 - Move _uninstall.log to /data/adb/logs/
-- Dolby Atmos:
-  - Hides in-bulit LunarisDolby.apk
+- Dolby Atmos: Hides in-bulit LunarisDolby.apk
 - Removes conflicted weird modules
 
 v3.9
@@ -88,21 +94,13 @@ v3.8
 
 v3.7
 - Update Spatial Sound libraries from https://dumps.tadiphone.dev/dumps/motorola/cancunf user-15-V1TD35H.83-20-5-c7172e-release-keys
-- Dolby Atmos:
-  - Fix wrong manifest.xml location patch target in latest Magisk version
+- Dolby Atmos: Fix wrong manifest.xml location patch target in latest Magisk version
 
 v3.6
-- Dolby Atmos:
-  - Remove useless c2 codec service
+- Dolby Atmos: Remove useless c2 codec service
 - Tidy up aml.sh
 - Exclude \*audio\*effects\*haptic\*.xml
 - Fix wrong file permissions in some ROMs
-
-v3.5
-- Dolby Atmos:
-  - Fix ZN7android8String16aSEOS0 function not found in some ROMs
-  - Add libutils.so as system_support
-- Abort installation if fail to mount mirror system
 
 ## Download Tutorial
 https://t.me/ryukinotes/97
@@ -116,7 +114,7 @@ Possibility of bootloop or even softbrick or a service failure on Read-Only ROM 
 - Reboot
 - If you are using KernelSU, you need to disable Unmount Modules by Default in KernelSU app settings and install https://github.com/KernelSU-Modules-Repo/meta-overlayfs or https://github.com/KernelSU-Modules-Repo/magic_mount_rs or https://github.com/KernelSU-Modules-Repo/hybrid_mount or https://github.com/maxsteeel/nomount first depending on ROM compatibility
 - Install Moto Core Magisk Module first if using the original UI variant: https://github.com/reiryuki/Moto-Core-Magisk-Module except you are in Motorola ROM
-- If you have Dolby in-built in your ROM, then you need to activate data.cleanup=1 at the first time install (READ Optionals bellow!)
+- If you have Dolby in-built in your ROM, then you need to activate data.cleanup=1 at the first time install (READ Optionals below!)
 - Install this module via Magisk app or Kitsune Mask app or KernelSU app or Apatch app or Recovery if Magisk or Kitsune Mask installed
 - Install AML Magisk Module https://t.me/ryukinotes/34 only if using any other else audio mod module
 - Reboot
