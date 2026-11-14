@@ -125,6 +125,7 @@ Possibility of bootloop or even softbrick or a service failure on Read-Only ROM 
 
 ## Optionals
 - https://t.me/ryukinotes/8
+- https://t.me/ryukinotes/101
 - Global: https://t.me/ryukinotes/35
 - Stream: https://t.me/ryukinotes/52
 
